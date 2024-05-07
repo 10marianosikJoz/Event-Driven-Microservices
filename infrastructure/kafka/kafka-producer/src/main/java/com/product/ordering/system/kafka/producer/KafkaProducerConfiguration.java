@@ -2,7 +2,7 @@ package com.product.ordering.system.kafka.producer;
 
 import com.product.ordering.system.kafka.configuration.KafkaConfigurationData;
 import com.product.ordering.system.kafka.configuration.KafkaProducerConfigurationData;
-import com.product.ordering.system.kafka.message.serialization.MessageKafkaDtoJsonSerializer;
+import com.product.ordering.system.kafka.message.serialization.MessageKafkaProjectionJsonSerializer;
 import com.product.ordering.system.kafka.message.serialization.MessageKafkaProjection;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -44,7 +44,7 @@ class KafkaProducerConfiguration<T extends Serializable> {
         properties.put(ProducerConfig.RETRIES_CONFIG, kafkaProducerConfigurationData.getRetryCount());
 
         properties.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(VALUE_SERIALIZER_CLASS_CONFIG, MessageKafkaDtoJsonSerializer.class);
+        properties.put(VALUE_SERIALIZER_CLASS_CONFIG, MessageKafkaProjectionJsonSerializer.class);
         properties.put(ACKS_CONFIG, "all");
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
 

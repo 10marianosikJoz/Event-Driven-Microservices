@@ -7,9 +7,9 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageKafkaDtoJsonSerializer<T extends MessageKafkaProjection> extends JsonSerializer<T> {
+public class MessageKafkaProjectionJsonSerializer<T extends MessageKafkaProjection> extends JsonSerializer<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageKafkaDtoJsonSerializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageKafkaProjectionJsonSerializer.class);
 
     @Override
     public byte[] serialize(String topic, MessageKafkaProjection data) {
@@ -20,7 +20,7 @@ public class MessageKafkaDtoJsonSerializer<T extends MessageKafkaProjection> ext
             }
             return objectMapper.writeValueAsBytes(data);
         } catch (Exception e) {
-            throw new SerializationException("Error when serializing MessageKafkaDto to byte[] array");
+            throw new SerializationException("Error when serializing MessageKafkaProjection to byte[] array");
         }
     }
 }

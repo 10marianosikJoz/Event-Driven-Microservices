@@ -21,10 +21,10 @@ class OrderPaidKafkaEventListenerHelper {
     }
 
     void handleOrderPaidEventData(List<OrderPaidEventKafkaProjection> messages) {
-       messages.forEach(it -> warehouseApplicationService.verifyOrder(mapOrderPaidEventKafkaDtoToOrderPaidEvent(it)));
+       messages.forEach(it -> warehouseApplicationService.verifyOrder(mapOrderPaidEventKafkaProjectionToOrderPaidEvent(it)));
     }
 
-    private OrderPaidEvent mapOrderPaidEventKafkaDtoToOrderPaidEvent(OrderPaidEventKafkaProjection orderPaidEventKafkaProjection) {
+    private OrderPaidEvent mapOrderPaidEventKafkaProjectionToOrderPaidEvent(OrderPaidEventKafkaProjection orderPaidEventKafkaProjection) {
         return inputMessageKafkaMapper.mapOrderPaidEventKafkaProjectionToOrderPaidEvent(orderPaidEventKafkaProjection);
     }
 }

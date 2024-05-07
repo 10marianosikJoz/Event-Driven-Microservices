@@ -40,13 +40,13 @@ class PaymentStatusKafkaEventListenerHelper {
     }
 
     private void determinePaymentStatus(PaymentStatusEventKafkaProjection paymentStatusEventKafkaProjection) {
-            var paymentStatusEvent = mapPaymentStatusEventKafkaDtoToPaymentStatusEvent(paymentStatusEventKafkaProjection);
+            var paymentStatusEvent = mapPaymentStatusEventKafkaProjectionToPaymentStatusEvent(paymentStatusEventKafkaProjection);
 
             verifyPaymentStatus(paymentStatusEvent);
     }
 
-    private PaymentStatusEvent mapPaymentStatusEventKafkaDtoToPaymentStatusEvent(PaymentStatusEventKafkaProjection paymentStatusEventKafkaProjection) {
-        return inputMessageKafkaMapper.mapPaymentStatusEventKafkaDtoToPaymentStatusEvent(paymentStatusEventKafkaProjection);
+    private PaymentStatusEvent mapPaymentStatusEventKafkaProjectionToPaymentStatusEvent(PaymentStatusEventKafkaProjection paymentStatusEventKafkaProjection) {
+        return inputMessageKafkaMapper.mapPaymentStatusEventKafkaProjectionToPaymentStatusEvent(paymentStatusEventKafkaProjection);
     }
 
     private void verifyPaymentStatus(PaymentStatusEvent paymentStatusEvent) {

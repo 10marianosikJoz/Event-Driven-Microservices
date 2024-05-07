@@ -12,30 +12,30 @@ import org.springframework.stereotype.Component;
 class InputMessageKafkaMapper {
 
     WarehouseApprovalEvent mapWarehouseApprovalEventKafkaProjectionToWarehouseApprovalEvent(WarehouseApprovalEventKafkaProjection warehouseApprovalEventKafkaProjection) {
-        var warehouseApprovalDto = warehouseApprovalEventKafkaProjection.getData();
+        var warehouseApprovalProjection = warehouseApprovalEventKafkaProjection.getData();
 
         return WarehouseApprovalEvent.builder()
                 .id(warehouseApprovalEventKafkaProjection.getMessageId())
                 .createdAt(warehouseApprovalEventKafkaProjection.createdAt())
-                .orderId(warehouseApprovalDto.orderId())
-                .warehouseId(warehouseApprovalDto.warehouseId())
-                .orderApprovalStatus(OrderApprovalStatus.valueOf(warehouseApprovalDto.orderApprovalStatus()))
-                .failureMessages(warehouseApprovalDto.failureMessages())
+                .orderId(warehouseApprovalProjection.orderId())
+                .warehouseId(warehouseApprovalProjection.warehouseId())
+                .orderApprovalStatus(OrderApprovalStatus.valueOf(warehouseApprovalProjection.orderApprovalStatus()))
+                .failureMessages(warehouseApprovalProjection.failureMessages())
                 .build();
     }
 
-    PaymentStatusEvent mapPaymentStatusEventKafkaDtoToPaymentStatusEvent(PaymentStatusEventKafkaProjection paymentStatusEventKafkaProjection) {
-        var paymentStatusDto = paymentStatusEventKafkaProjection.getData();
+    PaymentStatusEvent mapPaymentStatusEventKafkaProjectionToPaymentStatusEvent(PaymentStatusEventKafkaProjection paymentStatusEventKafkaProjection) {
+        var paymentStatusProjection = paymentStatusEventKafkaProjection.getData();
 
         return PaymentStatusEvent.builder()
                 .id(paymentStatusEventKafkaProjection.getMessageId())
                 .createdAt(paymentStatusEventKafkaProjection.createdAt())
-                .orderId(paymentStatusDto.orderId())
-                .paymentId(paymentStatusDto.paymentId())
-                .customerId(paymentStatusDto.customerId())
-                .paymentStatus(PaymentStatus.valueOf(paymentStatusDto.paymentStatus()))
-                .price(paymentStatusDto.price())
-                .failureMessages(paymentStatusDto.failureMessages())
+                .orderId(paymentStatusProjection.orderId())
+                .paymentId(paymentStatusProjection.paymentId())
+                .customerId(paymentStatusProjection.customerId())
+                .paymentStatus(PaymentStatus.valueOf(paymentStatusProjection.paymentStatus()))
+                .price(paymentStatusProjection.price())
+                .failureMessages(paymentStatusProjection.failureMessages())
                 .build();
 
     }

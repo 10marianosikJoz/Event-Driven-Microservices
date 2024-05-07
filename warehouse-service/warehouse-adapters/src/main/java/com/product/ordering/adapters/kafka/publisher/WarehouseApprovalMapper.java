@@ -14,18 +14,18 @@ class WarehouseApprovalMapper {
 
     WarehouseApprovalEventKafkaProjection mapOrderApprovedEventToWarehouseApprovalEventKafkaProjection(OrderApprovedEvent orderApprovedEvent) {
         var orderProcessed = orderApprovedEvent.orderProcessed();
-        var warehouseMessageDto = buildWarehouseMessageProjection(orderProcessed);
+        var warehouseMessageProjection = buildWarehouseMessageProjection(orderProcessed);
 
-        return new WarehouseApprovalEventKafkaProjection(warehouseMessageDto,
+        return new WarehouseApprovalEventKafkaProjection(warehouseMessageProjection,
                                                          orderApprovedEvent.orderProcessed().id().toString(),
                                                          orderApprovedEvent.createdAt());
     }
 
     WarehouseApprovalEventKafkaProjection mapOrderRejectedEventToWarehouseApprovalEventKafkaProjection(OrderRejectedEvent orderRejectedEvent) {
         var orderProcessed = orderRejectedEvent.orderProcessed();
-        var warehouseMessageDto = buildWarehouseMessageProjection(orderProcessed);
+        var warehouseMessageProjection = buildWarehouseMessageProjection(orderProcessed);
 
-        return new WarehouseApprovalEventKafkaProjection(warehouseMessageDto,
+        return new WarehouseApprovalEventKafkaProjection(warehouseMessageProjection,
                                                          orderRejectedEvent.orderProcessed().id().toString(),
                                                          orderRejectedEvent.createdAt());
     }

@@ -29,14 +29,14 @@ class OrderCreatedKafkaEventListenerHelper {
         messages.forEach(this::determineOrderStatus);
     }
 
-    private void determineOrderStatus(OrderCreatedEventKafkaProjection orderCompletedEventKafkaDto) {
-            verifyOrderStatus(orderCompletedEventKafkaDto);
+    private void determineOrderStatus(OrderCreatedEventKafkaProjection orderCompletedEventKafkaProjection) {
+            verifyOrderStatus(orderCompletedEventKafkaProjection);
     }
 
-    private void verifyOrderStatus(OrderCreatedEventKafkaProjection orderCompletedEventKafkaDto) {
-        if (OrderStatus.PENDING.name().equals(orderCompletedEventKafkaDto.getData().orderStatus())) {
-            LOGGER.info("Conducting payment process for order with id: {}", orderCompletedEventKafkaDto.getDataId());
-            conductCompletePaymentProcess(orderCompletedEventKafkaDto);
+    private void verifyOrderStatus(OrderCreatedEventKafkaProjection orderCompletedEventKafkaProjection) {
+        if (OrderStatus.PENDING.name().equals(orderCompletedEventKafkaProjection.getData().orderStatus())) {
+            LOGGER.info("Conducting payment process for order with id: {}", orderCompletedEventKafkaProjection.getDataId());
+            conductCompletePaymentProcess(orderCompletedEventKafkaProjection);
 
         }
     }

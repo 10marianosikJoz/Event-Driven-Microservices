@@ -36,13 +36,13 @@ class OrderApprovedKafkaEventPublisher implements OrderApprovedMessagePublisher 
         var orderId = orderApprovedEvent.orderProcessed().id().toString();
 
         try {
-            var warehouseApprovedEventKafkaDto = warehouseApprovalMapper.mapOrderApprovedEventToWarehouseApprovalEventKafkaProjection(orderApprovedEvent);
+            var warehouseApprovedEventKafkaProjection = warehouseApprovalMapper.mapOrderApprovedEventToWarehouseApprovalEventKafkaProjection(orderApprovedEvent);
             kafkaPublisher.send(warehouseServiceConfiguration.getWarehouseApprovalEventsTopicName(),
                                 orderId,
-                                warehouseApprovedEventKafkaDto,
+                                warehouseApprovedEventKafkaProjection,
                                 kafkaMessageHelper.kafkaCallback(warehouseServiceConfiguration.getWarehouseApprovalEventsTopicName(),
                                                                  orderId,
-                                                                 warehouseApprovedEventKafkaDto.getClass().getName()));
+                                                                 warehouseApprovedEventKafkaProjection.getClass().getName()));
         } catch (Exception e) {
             LOGGER.error("Error during sending WarehouseApprovalEvent to kafka. Order id: {}, error: {}", orderId, e.getMessage());
         }

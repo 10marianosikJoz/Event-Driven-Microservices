@@ -2,7 +2,7 @@ package com.product.ordering.system.kafka.consumer.configuration;
 
 import com.product.ordering.system.kafka.configuration.KafkaConfigurationData;
 import com.product.ordering.system.kafka.configuration.KafkaConsumerConfigurationData;
-import com.product.ordering.system.kafka.message.serialization.MessageKafkaDtoJsonDeserializer;
+import com.product.ordering.system.kafka.message.serialization.MessageKafkaProjectionJsonDeserializer;
 import com.product.ordering.system.kafka.message.serialization.TypeProjection;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -52,17 +52,17 @@ class KafkaConsumerConfiguration {
                                                                         kafkaConsumerConfigurationData.getMaxPartitionFetchBytesBoostFactor());
         properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, kafkaConsumerConfigurationData.getMaxPollRecords());
         properties.put(KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        properties.put(VALUE_DESERIALIZER_CLASS_CONFIG, MessageKafkaDtoJsonDeserializer.class);
+        properties.put(VALUE_DESERIALIZER_CLASS_CONFIG, MessageKafkaProjectionJsonDeserializer.class);
         properties.put(AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         return properties;
     }
 
     @Bean
-    public ConsumerFactory<String, TypeProjection> kafkaConsumerFactory(MessageKafkaDtoJsonDeserializer messageKafkaDtoJsonDeserializer) {
+    public ConsumerFactory<String, TypeProjection> kafkaConsumerFactory(MessageKafkaProjectionJsonDeserializer messageKafkaProjectionJsonDeserializer) {
         return new DefaultKafkaConsumerFactory<>(consumerConfiguration(),
                                                  new StringDeserializer(),
-                                                 messageKafkaDtoJsonDeserializer);
+                messageKafkaProjectionJsonDeserializer);
     }
 
     @Bean

@@ -11,14 +11,14 @@ import java.util.List;
 @Component
 class OutputMessageKafkaMapper {
 
-    PaymentStatusEventKafkaProjection mapPaymentEventToPaymentStatusEventKafkaDto(PaymentEvent paymentEvent) {
+    PaymentStatusEventKafkaProjection mapPaymentEventToPaymentStatusEventKafkaProjection(PaymentEvent paymentEvent) {
         var payment = paymentEvent.payment();
-        var paymentDto = buildPaymentMessageDto(payment);
+        var paymentProjection = buildPaymentMessageProjection(payment);
 
-        return new PaymentStatusEventKafkaProjection(paymentDto, payment.id().toString(), payment.createdAt());
+        return new PaymentStatusEventKafkaProjection(paymentProjection, payment.id().toString(), payment.createdAt());
     }
 
-    private PaymentMessageProjection buildPaymentMessageDto(Payment payment) {
+    private PaymentMessageProjection buildPaymentMessageProjection(Payment payment) {
         return PaymentMessageProjection.builder()
                 .paymentId(payment.id().value().toString())
                 .customerId(payment.customerId().value().toString())

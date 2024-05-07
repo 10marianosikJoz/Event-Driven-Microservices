@@ -37,14 +37,14 @@ class OrderCancellingKafkaEventPublisher implements OrderCancellingEventPublishe
         LOGGER.info("OrderCancellingEvent received. Order id : {}", orderId);
 
         try {
-            var orderCancellingEventKafkaDto = outputMessageKafkaMapper.mapOrderCancellingEventToOrderCancellingEventKafkaDto(orderCancellingEvent);
+            var orderCancellingEventKafkaProjection = outputMessageKafkaMapper.mapOrderCancellingEventToOrderCancellingEventKafkaProjection(orderCancellingEvent);
 
             kafkaPublisher.send(orderServiceConfiguration.getOrderCancellingEventsTopicName(),
                     orderId,
-                    orderCancellingEventKafkaDto,
+                    orderCancellingEventKafkaProjection,
                     kafkaCallbackHelper.kafkaCallback(orderServiceConfiguration.getOrderCancellingEventsTopicName(),
                                                       orderId,
-                                                      orderCancellingEventKafkaDto.getClass().getSimpleName()));
+                                                      orderCancellingEventKafkaProjection.getClass().getSimpleName()));
         } catch(Exception e) {
             LOGGER.info("Error during sending OrderCancellingEvent message to kafka. Order id: {}, error: {}",
                         orderId,

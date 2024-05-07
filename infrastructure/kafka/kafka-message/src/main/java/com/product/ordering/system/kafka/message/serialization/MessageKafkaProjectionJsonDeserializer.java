@@ -11,21 +11,21 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class MessageKafkaDtoJsonDeserializer implements Deserializer<TypeProjection> {
+public class MessageKafkaProjectionJsonDeserializer implements Deserializer<TypeProjection> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageKafkaDtoJsonDeserializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageKafkaProjectionJsonDeserializer.class);
 
     private final ObjectMapper objectMapper;
 
     private JsonDeserializer<MessageKafkaProjection> messageKafkaJsonDeserializer;
 
-    MessageKafkaDtoJsonDeserializer(final ObjectMapper objectMapper) {
+    MessageKafkaProjectionJsonDeserializer(final ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
     public void configure(final Map<String, ?> configs, final boolean isKey) {
-        messageKafkaDtoDeserializer().configure(configs, isKey);
+        messageKafkaProjectionDeserializer().configure(configs, isKey);
     }
 
     @Override
@@ -35,21 +35,21 @@ public class MessageKafkaDtoJsonDeserializer implements Deserializer<TypeProject
             return null;
         }
         try {
-            var item = messageKafkaDtoDeserializer().deserialize(topic, data);
+            var item = messageKafkaProjectionDeserializer().deserialize(topic, data);
             var clazz = Class.forName(item.type());
             return objectMapper.readerFor(clazz)
                                 .readValue(data);
         } catch (Exception e) {
-            throw new SerializationException("Cannot deserialize kafka message to MessageKafkaDto. Message: " + new String(data));
+            throw new SerializationException("Cannot deserialize kafka message to MessageKafkaProjection. Message: " + new String(data));
         }
     }
 
     @Override
     public void close() {
-        messageKafkaDtoDeserializer().close();
+        messageKafkaProjectionDeserializer().close();
     }
 
-    private JsonDeserializer<MessageKafkaProjection> messageKafkaDtoDeserializer() {
+    private JsonDeserializer<MessageKafkaProjection> messageKafkaProjectionDeserializer() {
         return this.messageKafkaJsonDeserializer != null ?
                this.messageKafkaJsonDeserializer :
                new JsonDeserializer<>(MessageKafkaProjection.class, objectMapper);

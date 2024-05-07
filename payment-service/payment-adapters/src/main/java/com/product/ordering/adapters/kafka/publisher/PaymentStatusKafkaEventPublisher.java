@@ -36,14 +36,14 @@ class PaymentStatusKafkaEventPublisher implements PaymentStatusMessagePublisher 
         var orderId = paymentEvent.payment().orderId().value().toString();
 
         try {
-            var paymentStatusEventKafkaDto = outputMessageKafkaMapper.mapPaymentEventToPaymentStatusEventKafkaDto(paymentEvent);
+            var paymentStatusEventKafkaProjection = outputMessageKafkaMapper.mapPaymentEventToPaymentStatusEventKafkaProjection(paymentEvent);
 
             kafkaPublisher.send(paymentServiceConfiguration.getPaymentStatusEventsTopicName(),
                                 orderId,
-                                paymentStatusEventKafkaDto,
+                                paymentStatusEventKafkaProjection,
                                 kafkaCallbackHelper.kafkaCallback(paymentServiceConfiguration.getPaymentStatusEventsTopicName(),
                                                                   paymentEvent.payment().id().toString(),
-                                                                  paymentStatusEventKafkaDto.getClass().getSimpleName()));
+                                                                  paymentStatusEventKafkaProjection.getClass().getSimpleName()));
         } catch (Exception e) {
             LOGGER.error("Error during sending PaymentStatusEvent message to kafka. Error: {}", e.getMessage());
         }

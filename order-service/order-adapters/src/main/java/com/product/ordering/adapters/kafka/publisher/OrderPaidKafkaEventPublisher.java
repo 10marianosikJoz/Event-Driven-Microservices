@@ -36,15 +36,15 @@ class OrderPaidKafkaEventPublisher implements OrderPaidEventPublisher {
         var orderId = orderPaidEvent.getOrder().id().value().toString();
 
         try {
-            var orderPaidEventKafkaDto = outputMessageKafkaMapper.mapOrderPaidEventToOrderPaidEventKafkaDto(orderPaidEvent);
+            var orderPaidEventKafkaProjection = outputMessageKafkaMapper.mapOrderPaidEventToOrderPaidEventKafkaProjection(orderPaidEvent);
             LOGGER.info("OrderPaidEvent received. Order id : {}", orderId);
 
             kafkaPublisher.send(orderServiceConfiguration.getOrderPaidEventsTopicName(),
                                 orderId,
-                                orderPaidEventKafkaDto,
+                                orderPaidEventKafkaProjection,
                                 kafkaCallbackHelper.kafkaCallback(orderServiceConfiguration.getOrderPaidEventsTopicName(),
                                                                   orderId,
-                                                                  orderPaidEventKafkaDto.getClass().getSimpleName()));
+                                                                  orderPaidEventKafkaProjection.getClass().getSimpleName()));
 
         } catch (Exception e) {
             LOGGER.error("Error during sending OrderPaidEvent message to kafka. Order id: {}, error: {}",

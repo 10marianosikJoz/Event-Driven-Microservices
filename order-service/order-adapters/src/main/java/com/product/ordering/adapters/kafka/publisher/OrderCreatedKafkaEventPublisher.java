@@ -37,14 +37,14 @@ class OrderCreatedKafkaEventPublisher implements OrderCreatedEventPublisher {
         LOGGER.info("OrderCreatedEvent received. Order id : {}", orderId);
 
         try {
-            var orderCreatedEventDtoKafka = outputMessageKafkaMapper.mapOrderCreatedEventToOrderCreatedEventKafkaDto(orderCreatedEvent);
+            var orderCreatedEventKafkaProjection = outputMessageKafkaMapper.mapOrderCreatedEventToOrderCreatedEventKafkaProjection(orderCreatedEvent);
 
             kafkaPublisher.send(orderServiceConfiguration.getOrderCreatedEventsTopicName(),
                                 orderId,
-                                orderCreatedEventDtoKafka,
+                                orderCreatedEventKafkaProjection,
                                 kafkaCallbackHelper.kafkaCallback(orderServiceConfiguration.getOrderCreatedEventsTopicName(),
                                                                   orderId,
-                                                                  orderCreatedEventDtoKafka.getClass().getSimpleName()));
+                                                                  orderCreatedEventKafkaProjection.getClass().getSimpleName()));
 
         } catch (Exception e) {
             LOGGER.error("Error while sending OrderCreatedEvent message to kafka. Order id: {} error: {}",

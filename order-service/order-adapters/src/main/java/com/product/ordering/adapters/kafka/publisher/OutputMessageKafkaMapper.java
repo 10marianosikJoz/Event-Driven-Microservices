@@ -20,35 +20,35 @@ import java.util.stream.Collectors;
 @Component
 class OutputMessageKafkaMapper {
 
-    OrderCancellingEventKafkaProjection mapOrderCancellingEventToOrderCancellingEventKafkaDto(OrderCancellingEvent orderCancellingEvent) {
+    OrderCancellingEventKafkaProjection mapOrderCancellingEventToOrderCancellingEventKafkaProjection(OrderCancellingEvent orderCancellingEvent) {
         var order = orderCancellingEvent.getOrder();
-        var orderDto = prepareOrderMessageDto(order);
+        var orderProjection = prepareOrderMessageProjection(order);
 
-        return new OrderCancellingEventKafkaProjection(orderDto, orderDto.orderId(), orderCancellingEvent.createdAt());
+        return new OrderCancellingEventKafkaProjection(orderProjection, orderProjection.orderId(), orderCancellingEvent.createdAt());
     }
 
-    OrderPaidEventKafkaProjection mapOrderPaidEventToOrderPaidEventKafkaDto(OrderPaidEvent orderPaidEvent) {
+    OrderPaidEventKafkaProjection mapOrderPaidEventToOrderPaidEventKafkaProjection(OrderPaidEvent orderPaidEvent) {
         var order = orderPaidEvent.getOrder();
-        var orderDto = prepareOrderMessageDto(order);
+        var orderProjection = prepareOrderMessageProjection(order);
 
-        return new OrderPaidEventKafkaProjection(orderDto, orderDto.orderId(), orderPaidEvent.createdAt());
+        return new OrderPaidEventKafkaProjection(orderProjection, orderProjection.orderId(), orderPaidEvent.createdAt());
     }
 
-    OrderCreatedEventKafkaProjection mapOrderCreatedEventToOrderCreatedEventKafkaDto(OrderCreatedEvent orderCreatedEvent) {
+    OrderCreatedEventKafkaProjection mapOrderCreatedEventToOrderCreatedEventKafkaProjection(OrderCreatedEvent orderCreatedEvent) {
         var order = orderCreatedEvent.getOrder();
-        var orderDto = prepareOrderMessageDto(order);
+        var orderProjection = prepareOrderMessageProjection(order);
 
-        return new OrderCreatedEventKafkaProjection(orderDto, orderDto.orderId(), orderCreatedEvent.createdAt());
+        return new OrderCreatedEventKafkaProjection(orderProjection, orderProjection.orderId(), orderCreatedEvent.createdAt());
     }
 
-    private OrderMessageProjection prepareOrderMessageDto(Order order) {
+    private OrderMessageProjection prepareOrderMessageProjection(Order order) {
         return OrderMessageProjection.builder()
                 .orderId(order.id().value().toString())
                 .customerId(order.customerId().value().toString())
                 .warehouseId(order.warehouseId().value().toString())
-                .deliveryAddress(mapDeliveryAddressToDeliveryAddressMessageDto(order.deliveryAddress()))
+                .deliveryAddress(mapDeliveryAddressToDeliveryAddressMessageProjection(order.deliveryAddress()))
                 .currency(order.currency().name())
-                .orderItems(mapOrderItemToOrderItemDto(order))
+                .orderItems(mapOrderItemToOrderItemProjection(order))
                 .paymentMethod(order.paymentMethod().name())
                 .deliveryMethod(order.deliveryMethod().name())
                 .price(order.price().amount())
@@ -58,14 +58,14 @@ class OutputMessageKafkaMapper {
                 .build();
     }
 
-    private DeliveryAddressMessageProjection mapDeliveryAddressToDeliveryAddressMessageDto(DeliveryAddress deliveryAddress) {
+    private DeliveryAddressMessageProjection mapDeliveryAddressToDeliveryAddressMessageProjection(DeliveryAddress deliveryAddress) {
         return new DeliveryAddressMessageProjection(deliveryAddress.id().toString(),
                                                     deliveryAddress.street(),
                                                     deliveryAddress.postalCode(),
                                                     deliveryAddress.city());
     }
 
-    private Set<OrderItemMessageProjection> mapOrderItemToOrderItemDto(Order order) {
+    private Set<OrderItemMessageProjection> mapOrderItemToOrderItemProjection(Order order) {
         return order.orderItems().stream()
                 .map(it -> new OrderItemMessageProjection(it.id().toString(),
                                                           it.product().id().value().toString(),

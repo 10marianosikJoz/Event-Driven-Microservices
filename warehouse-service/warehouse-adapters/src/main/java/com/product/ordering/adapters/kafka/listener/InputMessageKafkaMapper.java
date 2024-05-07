@@ -12,15 +12,15 @@ import java.util.List;
 class InputMessageKafkaMapper {
 
     OrderPaidEvent mapOrderPaidEventKafkaProjectionToOrderPaidEvent(OrderPaidEventKafkaProjection orderPaidEventKafkaProjection) {
-        var orderMessageDto = orderPaidEventKafkaProjection.getData();
+        var orderMessageProjection = orderPaidEventKafkaProjection.getData();
 
         return OrderPaidEvent.builder()
-                .orderId(orderMessageDto.orderId())
-                .warehouseId(orderMessageDto.warehouseId())
-                .price(orderMessageDto.price())
-                .createdAt(orderMessageDto.createdAt())
-                .orderStatus(orderMessageDto.orderStatus())
-                .orderItem(mapOrderMessageProjectionToOrderItemProjection(orderMessageDto))
+                .orderId(orderMessageProjection.orderId())
+                .warehouseId(orderMessageProjection.warehouseId())
+                .price(orderMessageProjection.price())
+                .createdAt(orderMessageProjection.createdAt())
+                .orderStatus(orderMessageProjection.orderStatus())
+                .orderItem(mapOrderMessageProjectionToOrderItemProjection(orderMessageProjection))
                 .build();
     }
 
