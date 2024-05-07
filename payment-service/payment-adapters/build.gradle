@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':payment-service:payment-domain:payment-application-service'))
+    implementation(project(':payment-service:payment-domain:payment-domain-core'))
+    implementation(project(':payment-service:payment-entities'))
+    implementation(project(':common:common-domain'))
+    implementation(project(':infrastructure:kafka:kafka-producer'))
+    implementation(project(':infrastructure:kafka:kafka-consumer'))
+    implementation(project(':infrastructure:kafka:kafka-model'))
+    implementation(project(':infrastructure:kafka:kafka-message'))
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.kafka)
+    implementation(libs.spring.tx)
+    runtimeOnly(libs.postgresql)
+}
+
+test {
+    useJUnitPlatform()
+}

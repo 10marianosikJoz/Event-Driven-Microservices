@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':common:common-domain'))
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.junit.jupiter)
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "8.6"
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+dependencies {
+    implementation(project(':infrastructure:kafka:kafka-model'))
+    implementation(project(':infrastructure:kafka:kafka-config-data'))
+    implementation(project(':infrastructure:kafka:kafka-message'))
+    implementation(project(':order-service:order-domain:order-domain-core'))
+    implementation(project(':common:common-domain'))
+    implementation(libs.spring.kafka)
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.javax.annotation.api)
+}
+
+apply plugin: "io.freefair.lombok"

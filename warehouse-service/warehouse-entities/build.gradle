@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "8.6"
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':warehouse-service:warehouse-domain:warehouse-application-service'))
+    implementation(project(':warehouse-service:warehouse-domain:warehouse-domain-core'))
+    implementation(project(':common:common-domain'))
+    implementation(libs.spring.boot.starter.data.jpa)
+}
+
+apply plugin: "io.freefair.lombok"

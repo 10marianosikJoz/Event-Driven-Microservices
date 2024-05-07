@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "8.6"
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':payment-service:payment-domain:payment-domain-core'))
+    implementation(project(':common:common-domain'))
+    implementation(libs.spring.tx)
+    implementation(libs.spring.boot.starter.web)
+    testImplementation(libs.assertj.core);
+    testImplementation(libs.junit.jupiter)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+apply plugin: "io.freefair.lombok"

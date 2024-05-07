@@ -1,0 +1,92 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+rootProject.name = 'product-ordering-system'
+include 'order-service'
+include 'payment-service'
+include 'warehouse-service'
+include 'common'
+include 'infrastructure'
+include 'order-service:order-adapters'
+findProject(':order-service:order-adapters')?.name = 'order-adapters'
+include 'order-service:order-container'
+findProject(':order-service:order-container')?.name = 'order-container'
+include 'order-service:order-entities'
+findProject(':order-service:order-entities')?.name = 'order-entities'
+include 'order-service:order-domain'
+findProject(':order-service:order-domain')?.name = 'order-domain'
+include 'order-service:order-domain:order-application-service'
+findProject(':order-service:order-domain:order-application-service')?.name = 'order-application-service'
+include 'order-service:order-domain:order-domain-core'
+findProject(':order-service:order-domain:order-domain-core')?.name = 'order-domain-core'
+include 'common:common-domain'
+findProject(':common:common-domain')?.name = 'common-domain'
+include 'infrastructure:kafka'
+findProject(':infrastructure:kafka')?.name = 'kafka'
+include 'infrastructure:kafka:kafka-config-data'
+findProject(':infrastructure:kafka:kafka-config-data')?.name = 'kafka-config-data'
+include 'infrastructure:kafka:kafka-message'
+findProject(':infrastructure:kafka:kafka-message')?.name = 'kafka-message'
+include 'infrastructure:kafka:kafka-model'
+findProject(':infrastructure:kafka:kafka-model')?.name = 'kafka-model'
+include 'infrastructure:kafka:kafka-consumer'
+findProject(':infrastructure:kafka:kafka-consumer')?.name = 'kafka-consumer'
+include 'infrastructure:kafka:kafka-producer'
+findProject(':infrastructure:kafka:kafka-producer')?.name = 'kafka-producer'
+include 'common:common-application'
+findProject(':common:common-application')?.name = 'common-application'
+include 'payment-service:payment-application'
+findProject(':payment-service:payment-application')?.name = 'payment-application'
+include 'payment-service:payment-container'
+findProject(':payment-service:payment-container')?.name = 'payment-container'
+include 'payment-service:payment-entities'
+findProject(':payment-service:payment-entities')?.name = 'payment-entities'
+include 'payment-service:payment-domain'
+findProject(':payment-service:payment-domain')?.name = 'payment-domain'
+include 'payment-service:payment-adapters'
+findProject(':payment-service:payment-adapters')?.name = 'payment-adapters'
+include 'warehouse-service:warehouse-application'
+findProject(':warehouse-service:warehouse-application')?.name = 'warehouse-application'
+include 'warehouse-service:warehouse-container'
+findProject(':warehouse-service:warehouse-container')?.name = 'warehouse-container'
+include 'warehouse-service:warehouse-entities'
+findProject(':warehouse-service:warehouse-entities')?.name = 'warehouse-entities'
+include 'warehouse-service:warehouse-domain'
+findProject(':warehouse-service:warehouse-domain')?.name = 'warehouse-domain'
+include 'warehouse-service:warehouse-adapters'
+findProject(':warehouse-service:warehouse-adapters')?.name = 'warehouse-adapters'
+include 'warehouse-service:warehouse-domain:warehouse-application-service'
+findProject(':warehouse-service:warehouse-domain:warehouse-application-service')?.name = 'warehouse-application-service'
+include 'warehouse-service:warehouse-domain:warehouse-domain-core'
+findProject(':warehouse-service:warehouse-domain:warehouse-domain-core')?.name = 'warehouse-domain-core'
+include 'payment-service:payment-domain:payment-domain-core'
+findProject(':payment-service:payment-domain:payment-domain-core')?.name = 'payment-domain-core'
+include 'payment-service:payment-domain:payment-application-service'
+findProject(':payment-service:payment-domain:payment-application-service')?.name = 'payment-application-service'
+
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        mavenCentral()
+    }
+    versionCatalogs {
+        create('libs') {
+            library('spring-context', 'org.springframework', 'spring-context').version('6.1.6')
+            library('spring-tx', 'org.springframework', 'spring-tx').version('6.1.6')
+            library('spring-boot-starter-web', 'org.springframework.boot', 'spring-boot-starter-web').version('3.2.5')
+            library('spring-kafka', 'org.springframework.kafka', 'spring-kafka').version('3.1.4')
+            library('spring-boot-starter-data-jpa', 'org.springframework.boot', 'spring-boot-starter-data-jpa').version('3.2.5')
+            library('spring-boot-starter-validation', 'org.springframework.boot', 'spring-boot-starter-validation').version('3.2.5')
+            library('spring-boot-starter-test', 'org.springframework.boot', 'spring-boot-starter-test').version('3.2.5')
+            library('postgresql', 'org.postgresql', 'postgresql').version('42.7.1')
+            library('kafka-clients', 'org.apache.kafka', 'kafka-clients').version('3.7.0')
+            library('javax.annotation-api', 'javax.annotation', 'javax.annotation-api').version('1.3.2')
+            library('jackson-databind', 'com.fasterxml.jackson.core', 'jackson-databind').version('2.17.1')
+            library('archunit-junit5-api', 'com.tngtech.archunit', 'archunit-junit5-api').version('1.3.0')
+            library('mockito-core', 'org.mockito', 'mockito-core').version('5.11.0')
+            library('assertj-core', 'org.assertj', 'assertj-core').version('3.25.3')
+            library('junit-jupiter', 'org.junit.jupiter', 'junit-jupiter').version('5.8.1')
+            library('junit-bom', 'org.junit', 'junit-bom').version('5.8.1')
+        }
+    }
+}

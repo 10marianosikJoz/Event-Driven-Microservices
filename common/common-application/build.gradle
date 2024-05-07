@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "8.6"
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+apply plugin: "io.freefair.lombok"

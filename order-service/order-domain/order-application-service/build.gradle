@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id "io.freefair.lombok" version "8.6"
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api(project(':order-service:order-domain:order-domain-core'))
+    api(project(':common:common-domain'))
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.validation)
+    implementation(libs.spring.tx)
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.junit.jupiter)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+apply plugin: "io.freefair.lombok"

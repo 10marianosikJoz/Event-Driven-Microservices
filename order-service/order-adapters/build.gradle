@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "8.6"
+}
+
+group = 'com.product.ordering.system'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(':order-service:order-domain:order-application-service'))
+    implementation(project(':order-service:order-domain:order-domain-core'))
+    implementation(project(':order-service:order-entities'))
+    implementation(project(':infrastructure:kafka:kafka-message'))
+    implementation(project(':infrastructure:kafka:kafka-model'))
+    implementation(project(':infrastructure:kafka:kafka-consumer'))
+    implementation(project(':infrastructure:kafka:kafka-producer'))
+    implementation(project(':common:common-application'))
+    implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.validation)
+    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.kafka)
+    testImplementation(libs.spring.boot.starter.test)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+apply plugin: "io.freefair.lombok"

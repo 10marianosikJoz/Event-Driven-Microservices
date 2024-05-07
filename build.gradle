@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+}
+
+allprojects {
+    group = 'com.product.ordering.system'
+    version = '1.0-SNAPSHOT'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_19
+        targetCompatibility = JavaVersion.VERSION_19
+    }
+}
