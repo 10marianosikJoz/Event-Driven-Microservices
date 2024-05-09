@@ -7,18 +7,18 @@ import java.time.Instant;
 
 public final class OrderCancellingEvent extends OrderEvent {
 
-    private final DomainEventPublisher<OrderCancellingEvent> orderCancelledEventDomainEventPublisher;
+    private final DomainEventPublisher<OrderCancellingEvent> orderCancellingEventDomainEventPublisher;
 
     public OrderCancellingEvent(final Order order,
                                 final Instant createdAt,
-                                final DomainEventPublisher<OrderCancellingEvent> orderCancelledEventDomainEventPublisher) {
+                                final DomainEventPublisher<OrderCancellingEvent> orderCancellingEventDomainEventPublisher) {
 
         super(order, createdAt);
-        this.orderCancelledEventDomainEventPublisher = orderCancelledEventDomainEventPublisher;
+        this.orderCancellingEventDomainEventPublisher = orderCancellingEventDomainEventPublisher;
     }
 
     @Override
     public void run() {
-        orderCancelledEventDomainEventPublisher.publish(this);
+        orderCancellingEventDomainEventPublisher.publish(this);
     }
 }

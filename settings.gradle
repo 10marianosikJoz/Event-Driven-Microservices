@@ -32,6 +32,8 @@ include 'infrastructure:kafka:kafka-consumer'
 findProject(':infrastructure:kafka:kafka-consumer')?.name = 'kafka-consumer'
 include 'infrastructure:kafka:kafka-producer'
 findProject(':infrastructure:kafka:kafka-producer')?.name = 'kafka-producer'
+include 'infrastructure:saga'
+findProject(':infrastructure:saga')?.name = 'saga'
 include 'common:common-application'
 findProject(':common:common-application')?.name = 'common-application'
 include 'payment-service:payment-application'
@@ -90,3 +92,4 @@ dependencyResolutionManagement {
         }
     }
 }
+
