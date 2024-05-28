@@ -54,12 +54,12 @@ class WarehouseApprovalKafkaEventListenerHelper {
 
     private void verifyOrderApprovalStatus(WarehouseApprovalEvent warehouseApprovalEvent) {
         if (OrderApprovalStatus.APPROVED == warehouseApprovalEvent.orderApprovalStatus()) {
-            LOGGER.info("Conducting approval for Order with id: {}.", warehouseApprovalEvent.orderId());
+            LOGGER.info("Conducting approval process for order with id: {}.", warehouseApprovalEvent.orderId());
 
             orderApproved(warehouseApprovalEvent);
 
         } else if (OrderApprovalStatus.REJECTED == warehouseApprovalEvent.orderApprovalStatus()) {
-            LOGGER.info("Conduction rejection for Order with id: {}, failure messages: {}.",
+            LOGGER.info("Conduction rejection process for order with id: {}, failure messages: {}.",
                         warehouseApprovalEvent.orderId(),
                         warehouseApprovalEvent.failureMessages());
 

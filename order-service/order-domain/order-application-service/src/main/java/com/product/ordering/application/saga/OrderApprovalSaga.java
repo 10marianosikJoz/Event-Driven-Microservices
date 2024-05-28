@@ -49,7 +49,7 @@ public class OrderApprovalSaga implements SagaStep<WarehouseApprovalEvent, Empty
 
     @Override
     public OrderCancellingEvent rollback(WarehouseApprovalEvent warehouseApprovalEvent) {
-        LOGGER.info("SagaStep: Cancelling order: {}", warehouseApprovalEvent.orderId());
+        LOGGER.info("SagaStep: Cancelling order: {}.", warehouseApprovalEvent.orderId());
 
         var order = orderRepository.fetchOrder(new OrderId(UUID.fromString(warehouseApprovalEvent.orderId())));
 
@@ -57,7 +57,7 @@ public class OrderApprovalSaga implements SagaStep<WarehouseApprovalEvent, Empty
 
         orderRepository.save(order);
 
-        LOGGER.info("OrderApprovalSaga: Order: {}. is cancelling", order.id());
+        LOGGER.info("OrderApprovalSaga: Order: {}, is cancelling.", order.id());
         LOGGER.info("OrderApprovalSaga: Publishing OrderCancellingEvent for order: {} with failure messages: {}",
                     order.id().value(),
                     warehouseApprovalEvent.failureMessages());
