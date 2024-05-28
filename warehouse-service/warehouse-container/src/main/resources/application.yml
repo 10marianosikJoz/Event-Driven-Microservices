@@ -50,5 +50,3 @@ kafka-consumer:
 warehouse-service:
   order-paid-events-topic-name: order-paid-events
   warehouse-approval-events-topic-name: warehouse-approval-events
-#  outbox-scheduler-fixed-rate: 15000
-#  outbox-scheduler-initial-delay: 60000
