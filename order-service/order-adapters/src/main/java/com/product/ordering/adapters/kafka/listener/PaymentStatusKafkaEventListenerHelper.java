@@ -53,11 +53,15 @@ class PaymentStatusKafkaEventListenerHelper {
     private void verifyPaymentStatus(PaymentStatusEvent paymentStatusEvent) {
 
         if (PaymentStatus.COMPLETED == paymentStatusEvent.paymentStatus()) {
+            LOGGER.info("Conducting completing payment process for order: {}.", paymentStatusEvent.orderId());
+
             paymentCompleted(paymentStatusEvent);
 
         } else if (PaymentStatus.CANCELLED == paymentStatusEvent.paymentStatus() ||
                    PaymentStatus.REJECTED == paymentStatusEvent.paymentStatus() ||
                    PaymentStatus.FAILED == paymentStatusEvent.paymentStatus()) {
+            LOGGER.info("Conducting cancelling payment process for order: {}.", paymentStatusEvent.orderId());
+
             paymentCancelled(paymentStatusEvent);
         }
     }

@@ -98,7 +98,7 @@ public class OrderApprovalSaga implements SagaStep<WarehouseApprovalEvent> {
 
     @Override
     public void rollback(WarehouseApprovalEvent warehouseApprovalEvent) {
-        LOGGER.info("SagaStep: Cancelling order: {}", warehouseApprovalEvent.orderId());
+        LOGGER.info("SagaStep: Cancelling order: {}.", warehouseApprovalEvent.orderId());
 
         var orderPaidOutboxMessage = orderOutboxRepository.findByMessageTypeAndSagaIdAndSagaStatus(OrderPaidOutboxMessage.class,
                                                                                                    UUID.fromString(warehouseApprovalEvent.sagaId()),
@@ -111,7 +111,7 @@ public class OrderApprovalSaga implements SagaStep<WarehouseApprovalEvent> {
 
         var orderCancellingEvent = initializeOrderCancelling(warehouseApprovalEvent);
 
-        LOGGER.info("OrderApprovalSaga: Order: {}. is cancelling", orderCancellingEvent.getOrder().id().value());
+        LOGGER.info("OrderApprovalSaga: Order: {}, is cancelling.", orderCancellingEvent.getOrder().id().value());
         LOGGER.info("OrderApprovalSaga: Publishing OrderCancellingEvent for order: {} with failure messages: {}",
                     orderCancellingEvent.getOrder().id().value(),
                     warehouseApprovalEvent.failureMessages());
