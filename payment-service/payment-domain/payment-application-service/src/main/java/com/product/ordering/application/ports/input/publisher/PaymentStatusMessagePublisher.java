@@ -1,6 +1,10 @@
 package com.product.ordering.application.ports.input.publisher;
 
-import com.product.ordering.domain.event.PaymentEvent;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
+import com.product.ordering.application.outbox.projection.PaymentOutboxMessage;
 
-public interface PaymentStatusMessagePublisher extends DomainEventPublisher<PaymentEvent> {}
+import java.util.function.Consumer;
+
+public interface PaymentStatusMessagePublisher {
+
+    void publish(PaymentOutboxMessage orderOutboxMessage, Consumer<PaymentOutboxMessage> outboxCallback);
+}

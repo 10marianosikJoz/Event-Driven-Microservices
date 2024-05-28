@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 public record OrderPaidEvent(String orderId,
                              String warehouseId,
+                             String sagaId,
                              BigDecimal price,
                              List<OrderItemProjection> orderItem,
                              String orderStatus,

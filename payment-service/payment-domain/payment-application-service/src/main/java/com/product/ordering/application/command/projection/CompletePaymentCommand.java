@@ -8,5 +8,6 @@ import java.util.UUID;
 @Builder
 public record CompletePaymentCommand(UUID paymentId,
                                      UUID orderId,
+                                     UUID sagaId,
                                      UUID customerId,
                                      BigDecimal price) {}

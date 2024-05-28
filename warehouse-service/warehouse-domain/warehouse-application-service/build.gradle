@@ -13,10 +13,13 @@ repositories {
 dependencies {
     implementation(project(':warehouse-service:warehouse-domain:warehouse-domain-core'))
     implementation(project(':common:common-domain'))
+    implementation(project(':infrastructure:kafka:kafka-model'))
+    implementation(project(':infrastructure:outbox'))
     implementation(libs.spring.tx)
     implementation(libs.spring.boot.starter.validation)
     testImplementation(libs.mockito.core)
     testImplementation(libs.assertj.core)
+    implementation(libs.jackson.databind)
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

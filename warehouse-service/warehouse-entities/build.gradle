@@ -14,6 +14,7 @@ dependencies {
     implementation(project(':warehouse-service:warehouse-domain:warehouse-application-service'))
     implementation(project(':warehouse-service:warehouse-domain:warehouse-domain-core'))
     implementation(project(':common:common-domain'))
+    implementation(project(':infrastructure:outbox'))
     implementation(libs.spring.boot.starter.data.jpa)
 }
 

@@ -6,6 +6,7 @@ import com.product.ordering.system.kafka.model.projection.OrderMessageProjection
 import com.product.ordering.system.kafka.model.event.OrderPaidEventKafkaProjection;
 import org.springframework.stereotype.Component;
 
+import java.math.RoundingMode;
 import java.util.List;
 
 @Component
@@ -17,7 +18,8 @@ class InputMessageKafkaMapper {
         return OrderPaidEvent.builder()
                 .orderId(orderMessageProjection.orderId())
                 .warehouseId(orderMessageProjection.warehouseId())
-                .price(orderMessageProjection.price())
+                .sagaId(orderPaidEventKafkaProjection.getSagaId())
+                .price(orderMessageProjection.price().setScale(2, RoundingMode.HALF_EVEN))
                 .createdAt(orderMessageProjection.createdAt())
                 .orderStatus(orderMessageProjection.orderStatus())
                 .orderItem(mapOrderMessageProjectionToOrderItemProjection(orderMessageProjection))
@@ -27,9 +29,9 @@ class InputMessageKafkaMapper {
     private List<OrderItemProjection> mapOrderMessageProjectionToOrderItemProjection(OrderMessageProjection orderMessageProjection) {
         return orderMessageProjection.orderItems().stream()
                                                   .map(it -> new OrderItemProjection(it.orderItemId(),
-                                                                              it.productId(),
-                                                                              it.price(),
-                                                                              it.quantity()))
+                                                                                     it.productId(),
+                                                                                     it.price(),
+                                                                                     it.quantity()))
                                                   .toList();
     }
 }

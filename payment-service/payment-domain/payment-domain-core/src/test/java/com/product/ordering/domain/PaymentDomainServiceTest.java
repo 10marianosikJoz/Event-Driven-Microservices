@@ -1,7 +1,5 @@
 package com.product.ordering.domain;
 
-import com.product.ordering.domain.event.PaymentEvent;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
 import com.product.ordering.domain.valueobject.PaymentStatus;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PaymentDomainServiceTest {
 
     private final PaymentDomainService paymentDomainService = new PaymentDomainService();
-    private final DomainEventPublisher<PaymentEvent> paymentApprovalEventMessagePublisher = new PaymentApprovalEventMessagePublisherMock();
 
     @Test
     void shouldBeAbleToCompletePaymentProcess() {
@@ -26,8 +23,7 @@ class PaymentDomainServiceTest {
         var paymentEvent = paymentDomainService.completePayment(payment,
                                                                 billfold,
                                                                 failureMessages,
-                                                                billfoldHistory,
-                                                                paymentApprovalEventMessagePublisher);
+                                                                billfoldHistory);
 
         //then
         assertThat(paymentEvent.createdAt()).isNotNull();
@@ -46,8 +42,7 @@ class PaymentDomainServiceTest {
         var paymentEvent = paymentDomainService.cancelPayment(payment,
                                                               billfold,
                                                               failureMessages,
-                                                              billfoldHistory,
-                                                              paymentApprovalEventMessagePublisher);
+                                                              billfoldHistory);
 
         //then
         assertThat(paymentEvent.createdAt()).isNotNull();

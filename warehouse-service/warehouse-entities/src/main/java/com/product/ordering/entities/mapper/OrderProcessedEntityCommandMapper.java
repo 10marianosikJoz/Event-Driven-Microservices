@@ -39,7 +39,7 @@ public class OrderProcessedEntityCommandMapper {
         return OrderProcessedEntity.builder()
                 .id(orderProcessed.id().value())
                 .warehouseId(orderProcessed.warehouseId().value())
-                .price(orderProcessed.price().getAmount())
+                .price(orderProcessed.price().amount())
                 .status(orderProcessed.orderApprovalStatus())
                 .items(mapOrderItemDomainObjectToOrderItemJpaEntity(orderProcessed.orderItems(), orderProcessed.id()))
                 .build();

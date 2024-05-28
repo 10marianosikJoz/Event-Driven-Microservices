@@ -28,6 +28,7 @@ class PaymentDataProvider {
 
     static CompletePaymentCommand invalidPaymentCommandPrice() {
         return CompletePaymentCommand.builder()
+                .paymentId(PaymentConstantDataProvider.PAYMENT_ID)
                 .orderId(PaymentConstantDataProvider.ORDER_ID)
                 .customerId(PaymentConstantDataProvider.CUSTOMER_ID)
                 .price(PaymentConstantDataProvider.INVALID_PAYMENT_PRICE)

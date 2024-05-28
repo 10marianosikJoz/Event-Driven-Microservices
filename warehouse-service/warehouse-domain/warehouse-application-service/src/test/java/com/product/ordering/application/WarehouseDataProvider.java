@@ -8,6 +8,7 @@ import com.product.ordering.domain.valueobject.*;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 class WarehouseDataProvider {
 
@@ -15,6 +16,7 @@ class WarehouseDataProvider {
         return OrderPaidEvent.builder()
                 .orderId(WarehouseConstantDataProvider.ORDER_ID.toString())
                 .warehouseId(WarehouseConstantDataProvider.WAREHOUSE_ID.toString())
+                .sagaId(UUID.randomUUID().toString())
                 .price(WarehouseConstantDataProvider.ORDER_PRICE)
                 .orderItem(orderItemProjections())
                 .orderStatus(WarehouseConstantDataProvider.ORDER_STATUS)

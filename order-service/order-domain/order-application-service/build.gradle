@@ -15,6 +15,7 @@ dependencies {
     api(project(':order-service:order-domain:order-domain-core'))
     api(project(':common:common-domain'))
     implementation(project(':infrastructure:saga'))
+    implementation(project(':infrastructure:outbox'))
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.spring.tx)

@@ -2,10 +2,14 @@ package com.product.ordering.application;
 
 import com.product.ordering.application.command.OrderProcessedMapper;
 import com.product.ordering.application.command.WarehouseApprovalHandler;
+import com.product.ordering.application.outbox.projection.OrderProcessedEventPayload;
+import com.product.ordering.application.outbox.projection.mapper.OrderProcessedOutboxMapper;
 import com.product.ordering.domain.WarehouseDomainService;
 import com.product.ordering.domain.entity.OrderProcessed;
 import com.product.ordering.domain.valueobject.OrderApprovalStatus;
+import com.product.ordering.domain.valueobject.OrderId;
 import com.product.ordering.domain.valueobject.OrderProcessedId;
+import com.product.ordering.system.outbox.model.OutboxStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,14 +23,14 @@ class WarehouseApplicationServiceTest {
     private final OrderProcessedMapper orderProcessedMapper = new OrderProcessedMapper();
     private final InMemoryWarehouseRepository inMemoryWarehouseRepository = new InMemoryWarehouseRepository();
     private final InMemoryOrderProcessedRepository inMemoryOrderProcessedRepository = new InMemoryOrderProcessedRepository();
-    private final OrderApprovedEventMessagePublisherMock orderApprovedEventMessagePublisherMock = new OrderApprovedEventMessagePublisherMock();
-    private final OrderRejectedEventMessagePublisherMock orderRejectedEventMessagePublisherMock = new OrderRejectedEventMessagePublisherMock();
+    private final InMemoryOrderProcessedOutboxRepository inMemoryOrderProcessedOutboxRepository = new InMemoryOrderProcessedOutboxRepository();
+    private final OrderProcessedOutboxMapper orderProcessedOutboxMapper = new OrderProcessedOutboxMapper();
     private final WarehouseApprovalHandler warehouseApprovalHandler = new WarehouseApprovalHandler(warehouseDomainService,
                                                                                                    orderProcessedMapper,
                                                                                                    inMemoryWarehouseRepository,
                                                                                                    inMemoryOrderProcessedRepository,
-                                                                                                   orderApprovedEventMessagePublisherMock,
-                                                                                                   orderRejectedEventMessagePublisherMock);
+                                                                                                   inMemoryOrderProcessedOutboxRepository,
+                                                                                                   orderProcessedOutboxMapper);
 
     private final WarehouseApplicationService warehouseApplicationService = new WarehouseApplicationService(warehouseApprovalHandler);
 
@@ -34,6 +38,7 @@ class WarehouseApplicationServiceTest {
     void truncate() {
         inMemoryWarehouseRepository.truncate();
         inMemoryOrderProcessedRepository.truncate();
+        inMemoryOrderProcessedOutboxRepository.truncate();
     }
 
     @Test
@@ -47,6 +52,7 @@ class WarehouseApplicationServiceTest {
 
         //then
         var orderProcessed = inMemoryOrderProcessedRepository.findById(new OrderProcessedId(UUID.fromString(orderPaidEvent.orderId())));
+
         assertThat(orderProcessed)
                 .isPresent().get()
                 .hasFieldOrPropertyWithValue("id.value", UUID.fromString(orderPaidEvent.orderId()))
@@ -60,6 +66,22 @@ class WarehouseApplicationServiceTest {
                                 .hasFieldOrPropertyWithValue("productId.value", UUID.fromString(orderPaidEvent.orderItem().get(0).productId()))
                                 .hasFieldOrPropertyWithValue("price.amount", orderPaidEvent.orderItem().get(0).price())
                                 .hasFieldOrPropertyWithValue("quantity.amount", orderPaidEvent.orderItem().get(0).quantity()));
+
+        var outboxMessage = inMemoryOrderProcessedOutboxRepository.findByOrderProcessedId(new OrderId(orderProcessed.get().id().value())).get();
+
+        assertThat(outboxMessage)
+                .hasFieldOrPropertyWithValue("orderApprovalStatus", OrderApprovalStatus.APPROVED)
+                .hasFieldOrProperty("id")
+                .hasFieldOrProperty("sagaId")
+                .hasFieldOrProperty("createdAt")
+                .hasFieldOrProperty("processedAt")
+                .hasFieldOrPropertyWithValue("aggregateId", orderProcessed.get().id().value())
+                .hasFieldOrPropertyWithValue("outboxStatus", OutboxStatus.STARTED)
+                .extracting(it -> (OrderProcessedEventPayload) it.getPayload())
+                .hasFieldOrPropertyWithValue("orderId", orderProcessed.get().id().value().toString())
+                .hasFieldOrPropertyWithValue("warehouseId", orderProcessed.get().warehouseId().value().toString())
+                .hasFieldOrPropertyWithValue("orderApprovalStatus", orderProcessed.get().orderApprovalStatus().name())
+                .hasFieldOrPropertyWithValue("failureMessages", null);
     }
 
 
@@ -75,6 +97,7 @@ class WarehouseApplicationServiceTest {
 
         //then
         var orderProcessed = inMemoryOrderProcessedRepository.findById(new OrderProcessedId(UUID.fromString(orderPaidEvent.orderId())));
+
         assertThat(orderProcessed)
                 .isPresent().get()
                 .hasFieldOrPropertyWithValue("id.value", UUID.fromString(orderPaidEvent.orderId()))
@@ -88,5 +111,21 @@ class WarehouseApplicationServiceTest {
                                 .hasFieldOrPropertyWithValue("productId.value", UUID.fromString(orderPaidEvent.orderItem().get(0).productId()))
                                 .hasFieldOrPropertyWithValue("price.amount", orderPaidEvent.orderItem().get(0).price())
                                 .hasFieldOrPropertyWithValue("quantity.amount", orderPaidEvent.orderItem().get(0).quantity()));
+
+        var outboxMessage = inMemoryOrderProcessedOutboxRepository.findByOrderProcessedId(new OrderId(orderProcessed.get().id().value())).get();
+
+        assertThat(outboxMessage)
+                .hasFieldOrPropertyWithValue("orderApprovalStatus", OrderApprovalStatus.REJECTED)
+                .hasFieldOrProperty("id")
+                .hasFieldOrProperty("sagaId")
+                .hasFieldOrProperty("createdAt")
+                .hasFieldOrProperty("processedAt")
+                .hasFieldOrPropertyWithValue("aggregateId", orderProcessed.get().id().value())
+                .hasFieldOrPropertyWithValue("outboxStatus", OutboxStatus.STARTED)
+                .extracting(it -> (OrderProcessedEventPayload) it.getPayload())
+                .hasFieldOrPropertyWithValue("orderId", orderProcessed.get().id().value().toString())
+                .hasFieldOrPropertyWithValue("warehouseId", orderProcessed.get().warehouseId().value().toString())
+                .hasFieldOrPropertyWithValue("orderApprovalStatus", orderProcessed.get().orderApprovalStatus().name())
+                .hasFieldOrPropertyWithValue("failureMessages", "Warehouse with id: " + orderProcessed.get().warehouseId() + " is not open");
     }
 }

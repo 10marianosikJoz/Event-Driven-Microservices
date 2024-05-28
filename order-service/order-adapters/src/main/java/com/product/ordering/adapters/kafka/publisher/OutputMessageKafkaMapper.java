@@ -1,10 +1,6 @@
 package com.product.ordering.adapters.kafka.publisher;
 
-import com.product.ordering.domain.entity.Order;
-import com.product.ordering.domain.event.OrderCancellingEvent;
-import com.product.ordering.domain.event.OrderPaidEvent;
-import com.product.ordering.domain.event.OrderCreatedEvent;
-import com.product.ordering.domain.valueobject.DeliveryAddress;
+import com.product.ordering.application.outbox.projection.*;
 import com.product.ordering.system.kafka.model.projection.DeliveryAddressMessageProjection;
 import com.product.ordering.system.kafka.model.projection.OrderItemMessageProjection;
 import com.product.ordering.system.kafka.model.projection.OrderMessageProjection;
@@ -13,64 +9,76 @@ import com.product.ordering.system.kafka.model.event.OrderPaidEventKafkaProjecti
 import com.product.ordering.system.kafka.model.event.OrderCreatedEventKafkaProjection;
 import org.springframework.stereotype.Component;
 
+import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 class OutputMessageKafkaMapper {
 
-    OrderCancellingEventKafkaProjection mapOrderCancellingEventToOrderCancellingEventKafkaProjection(OrderCancellingEvent orderCancellingEvent) {
-        var order = orderCancellingEvent.getOrder();
-        var orderProjection = prepareOrderMessageProjection(order);
+    OrderCancellingEventKafkaProjection mapOrderCancellingOutboxMessageToOrderCancellingEventKafkaProjection(OrderCancellingOutboxMessage orderCancellingOutboxMessage) {
+        var messagePayload = (OrderEventPayload) orderCancellingOutboxMessage.getPayload();
+        var orderProjection = prepareOrderMessageProjection(messagePayload);
 
-        return new OrderCancellingEventKafkaProjection(orderProjection, orderProjection.orderId(), orderCancellingEvent.createdAt());
+        return new OrderCancellingEventKafkaProjection(orderProjection,
+                                                       orderProjection.orderId(),
+                                                       orderCancellingOutboxMessage.getCreatedAt(),
+                                                       orderCancellingOutboxMessage.getSagaId().toString());
     }
 
-    OrderPaidEventKafkaProjection mapOrderPaidEventToOrderPaidEventKafkaProjection(OrderPaidEvent orderPaidEvent) {
-        var order = orderPaidEvent.getOrder();
-        var orderProjection = prepareOrderMessageProjection(order);
+    OrderPaidEventKafkaProjection mapOrderPaidOutboxMessageToOrderPaidEventKafkaProjection(OrderPaidOutboxMessage orderPaidOutboxMessage) {
+        var messagePayload = (OrderEventPayload) orderPaidOutboxMessage.getPayload();
+        var orderProjection = prepareOrderMessageProjection(messagePayload);
 
-        return new OrderPaidEventKafkaProjection(orderProjection, orderProjection.orderId(), orderPaidEvent.createdAt());
+        return new OrderPaidEventKafkaProjection(orderProjection,
+                                                 orderProjection.orderId(),
+                                                 orderPaidOutboxMessage.getCreatedAt(),
+                                                 orderPaidOutboxMessage.getSagaId().toString());
     }
 
-    OrderCreatedEventKafkaProjection mapOrderCreatedEventToOrderCreatedEventKafkaProjection(OrderCreatedEvent orderCreatedEvent) {
-        var order = orderCreatedEvent.getOrder();
-        var orderProjection = prepareOrderMessageProjection(order);
+    OrderCreatedEventKafkaProjection mapOrderCreatedOutboxMessageToOrderCreatedEventKafkaProjection(OrderCreatedOutboxMessage orderCreatedOutboxMessage) {
+        var messagePayload = (OrderEventPayload) orderCreatedOutboxMessage.getPayload();
+        var orderProjection = prepareOrderMessageProjection(messagePayload);
 
-        return new OrderCreatedEventKafkaProjection(orderProjection, orderProjection.orderId(), orderCreatedEvent.createdAt());
+        return new OrderCreatedEventKafkaProjection(orderProjection,
+                                                    orderProjection.orderId(),
+                                                    orderCreatedOutboxMessage.getCreatedAt(),
+                                                    orderCreatedOutboxMessage.getSagaId().toString());
     }
 
-    private OrderMessageProjection prepareOrderMessageProjection(Order order) {
+    private OrderMessageProjection prepareOrderMessageProjection(OrderEventPayload orderEventPayload) {
         return OrderMessageProjection.builder()
-                .orderId(order.id().value().toString())
-                .customerId(order.customerId().value().toString())
-                .warehouseId(order.warehouseId().value().toString())
-                .deliveryAddress(mapDeliveryAddressToDeliveryAddressMessageProjection(order.deliveryAddress()))
-                .currency(order.currency().name())
-                .orderItems(mapOrderItemToOrderItemProjection(order))
-                .paymentMethod(order.paymentMethod().name())
-                .deliveryMethod(order.deliveryMethod().name())
-                .price(order.price().amount())
-                .orderStatus(order.orderStatus().name())
-                .failureMessages(order.failureMessages())
+                .orderId(orderEventPayload.orderId())
+                .customerId(orderEventPayload.customerId())
+                .warehouseId(orderEventPayload.warehouseId())
+                .deliveryAddress(mapDeliveryAddressPayloadToDeliveryAddressMessageProjection(orderEventPayload.deliveryAddress()))
+                .currency(orderEventPayload.currency())
+                .orderItems(mapOrderItemPayloadToOrderItemProjection(orderEventPayload.orderItems()))
+                .paymentMethod(orderEventPayload.paymentMethod())
+                .deliveryMethod(orderEventPayload.deliveryMethod())
+                .price(orderEventPayload.price().setScale(2, RoundingMode.HALF_EVEN))
+                .orderStatus(orderEventPayload.orderStatus())
+                .failureMessages(Arrays.asList(orderEventPayload.failureMessages()))
                 .createdAt(Instant.now())
                 .build();
     }
 
-    private DeliveryAddressMessageProjection mapDeliveryAddressToDeliveryAddressMessageProjection(DeliveryAddress deliveryAddress) {
-        return new DeliveryAddressMessageProjection(deliveryAddress.id().toString(),
-                                                    deliveryAddress.street(),
-                                                    deliveryAddress.postalCode(),
-                                                    deliveryAddress.city());
+    private DeliveryAddressMessageProjection mapDeliveryAddressPayloadToDeliveryAddressMessageProjection(DeliveryAddressPayload deliveryAddressPayload) {
+        return new DeliveryAddressMessageProjection(deliveryAddressPayload.deliveryAddressId(),
+                                                    deliveryAddressPayload.street(),
+                                                    deliveryAddressPayload.postalCode(),
+                                                    deliveryAddressPayload.city());
     }
 
-    private Set<OrderItemMessageProjection> mapOrderItemToOrderItemProjection(Order order) {
-        return order.orderItems().stream()
-                .map(it -> new OrderItemMessageProjection(it.id().toString(),
-                                                          it.product().id().value().toString(),
-                                                          it.quantity().quantity(),
-                                                          it.subtotal().amount()))
+    private Set<OrderItemMessageProjection> mapOrderItemPayloadToOrderItemProjection(List<OrderItemPayload> orderItemPayload) {
+        return orderItemPayload.stream()
+                .map(it -> new OrderItemMessageProjection(it.orderItemId(),
+                                                          it.productId(),
+                                                          it.quantity(),
+                                                          it.subtotal()))
                 .collect(Collectors.toSet());
     }
 }

@@ -13,6 +13,8 @@ repositories {
 dependencies {
     implementation(project(':payment-service:payment-domain:payment-domain-core'))
     implementation(project(':common:common-domain'))
+    implementation(project(':infrastructure:outbox'))
+    implementation(project(':infrastructure:kafka:kafka-model'))
     implementation(libs.spring.tx)
     implementation(libs.spring.boot.starter.web)
     testImplementation(libs.assertj.core);

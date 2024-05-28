@@ -15,6 +15,7 @@ dependencies {
     implementation(project(':order-service:order-domain:order-domain-core'))
     implementation(project(':order-service:order-entities'))
     implementation(project(':infrastructure:saga'))
+    implementation(project(':infrastructure:outbox'))
     implementation(project(':infrastructure:kafka:kafka-message'))
     implementation(project(':infrastructure:kafka:kafka-model'))
     implementation(project(':infrastructure:kafka:kafka-consumer'))

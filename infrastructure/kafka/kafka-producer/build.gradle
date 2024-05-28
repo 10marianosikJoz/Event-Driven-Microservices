@@ -10,6 +10,7 @@ dependencies {
     implementation(project(':infrastructure:kafka:kafka-model'))
     implementation(project(':infrastructure:kafka:kafka-config-data'))
     implementation(project(':infrastructure:kafka:kafka-message'))
+    implementation(project(':infrastructure:outbox'))
     implementation(project(':order-service:order-domain:order-domain-core'))
     implementation(project(':common:common-domain'))
     implementation(libs.spring.kafka)

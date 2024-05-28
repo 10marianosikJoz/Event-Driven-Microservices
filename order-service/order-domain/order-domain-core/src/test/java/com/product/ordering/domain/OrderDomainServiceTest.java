@@ -1,9 +1,5 @@
 package com.product.ordering.domain;
 
-import com.product.ordering.domain.event.OrderCancellingEvent;
-import com.product.ordering.domain.event.OrderCreatedEvent;
-import com.product.ordering.domain.event.OrderPaidEvent;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
 import com.product.ordering.domain.valueobject.OrderStatus;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OrderDomainServiceTest {
 
     private final OrderDomainService orderDomainService = new OrderDomainService();
-    private final DomainEventPublisher<OrderCreatedEvent> orderCreatedEventMessagePublisherMock = new OrderCreatedEventMessagePublisherMock();
-    private final DomainEventPublisher<OrderCancellingEvent> orderCancellingEventMessagePublisherMock = new OrderCancelledEventMessagePublisherMock();
-    private final DomainEventPublisher<OrderPaidEvent> orderPaidEventMessagePublisherMock = new OrderPaidEventMessagePublisherMock();
 
     @Test
     void shouldCreateOrder() {
@@ -23,7 +16,7 @@ class OrderDomainServiceTest {
         var orderWithCompletedState = OrderDomainDataProvider.orderWithoutOrderStatus();
 
         //when
-        var orderCreatedEvent = orderDomainService.createOrder(orderWithCompletedState, orderCreatedEventMessagePublisherMock);
+        var orderCreatedEvent = orderDomainService.createOrder(orderWithCompletedState);
 
         //then
         assertThat(orderWithCompletedState.id()).isNotNull();
@@ -39,7 +32,7 @@ class OrderDomainServiceTest {
         var expectedMessage = "Total price must be greater than zero";
 
         //then
-        assertThatThrownBy(() -> orderDomainService.createOrder(orderWithIncorrectPrice, orderCreatedEventMessagePublisherMock))
+        assertThatThrownBy(() -> orderDomainService.createOrder(orderWithIncorrectPrice))
                                                     .hasMessageContaining(expectedMessage);
     }
 
@@ -49,7 +42,7 @@ class OrderDomainServiceTest {
         var orderWithPendingState = OrderDomainDataProvider.orderForPaying();
 
         //when
-        orderDomainService.payOrder(orderWithPendingState, orderPaidEventMessagePublisherMock);
+        orderDomainService.payOrder(orderWithPendingState);
 
         //then
         assertThat(orderWithPendingState.orderStatus()).isEqualTo(OrderStatus.PAID);
@@ -75,8 +68,7 @@ class OrderDomainServiceTest {
 
         //when
         var orderCancelledEvent = orderDomainService.initializeCancelling(orderWithCompletedState,
-                                                                          OrderConstantDataProvider.FAILURE_MESSAGE,
-                                                                          orderCancellingEventMessagePublisherMock);
+                                                                          OrderConstantDataProvider.FAILURE_MESSAGE);
         //then
         assertThat(orderCancelledEvent.createdAt()).isNotNull();
         assertThat(orderWithCompletedState.orderStatus()).isEqualTo(OrderStatus.CANCELLING);

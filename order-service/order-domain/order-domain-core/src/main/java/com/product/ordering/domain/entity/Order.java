@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Order extends AggregateRoot<OrderId> {
 
@@ -126,8 +127,7 @@ public class Order extends AggregateRoot<OrderId> {
     private void updateFailureMessages(List<String> failureMessages) {
         if (this.failureMessages != null && failureMessages != null) {
             this.failureMessages.addAll(failureMessages.stream()
-                                                       .filter(it -> !it.isBlank())
-                                                       .toList());
+                                                       .collect(Collectors.toList()));
         }
         if (this.failureMessages == null) {
             this.failureMessages = failureMessages;
@@ -223,7 +223,7 @@ public class Order extends AggregateRoot<OrderId> {
     }
 
     public Set<OrderItem> orderItems() {
-        return orderItems;
+        return Set.copyOf(orderItems);
     }
 
     public PaymentMethod paymentMethod() { return paymentMethod; }

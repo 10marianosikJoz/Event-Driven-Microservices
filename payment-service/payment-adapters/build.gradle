@@ -18,11 +18,12 @@ dependencies {
     implementation(project(':infrastructure:kafka:kafka-consumer'))
     implementation(project(':infrastructure:kafka:kafka-model'))
     implementation(project(':infrastructure:kafka:kafka-message'))
+    implementation(project(':infrastructure:outbox'))
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.kafka)
     implementation(libs.spring.tx)
-    runtimeOnly(libs.postgresql)
+    implementation(libs.postgresql)
 }
 
 test {

@@ -7,11 +7,12 @@ import java.time.Instant;
 
 public class OrderCancellingEventKafkaProjection extends MessageKafkaProjection<OrderMessageProjection> {
 
-    public OrderCancellingEventKafkaProjection(final OrderMessageProjection orderMessageProjection,
-                                               final String itemId,
-                                               final Instant createdAt) {
+    public OrderCancellingEventKafkaProjection(OrderMessageProjection orderMessageProjection,
+                                               String itemId,
+                                               Instant createdAt,
+                                               String sagaId) {
 
-        super(itemId, createdAt, orderMessageProjection);
+        super(itemId, createdAt, orderMessageProjection, sagaId);
     }
 
     public OrderCancellingEventKafkaProjection() {}

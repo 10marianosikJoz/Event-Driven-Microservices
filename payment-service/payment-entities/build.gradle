@@ -12,8 +12,9 @@ repositories {
 
 dependencies {
     implementation(project(':payment-service:payment-domain:payment-application-service'))
-    implementation(project(':common:common-domain'))
     implementation(project(':payment-service:payment-domain:payment-domain-core'))
+    implementation(project(':common:common-domain'))
+    implementation(project(':infrastructure:outbox'))
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.web)
 }

@@ -15,8 +15,10 @@ class InputMessageKafkaMapper {
         var orderMessageProjection = orderCreatedEventKafkaProjection.getData();
 
         return CompletePaymentCommand.builder()
+                .paymentId(UUID.fromString(orderCreatedEventKafkaProjection.getMessageId()))
                 .orderId(UUID.fromString(orderMessageProjection.orderId()))
                 .customerId(UUID.fromString(orderMessageProjection.customerId()))
+                .sagaId(UUID.fromString(orderCreatedEventKafkaProjection.getSagaId()))
                 .price(orderMessageProjection.price())
                 .build();
     }
@@ -25,8 +27,10 @@ class InputMessageKafkaMapper {
         var orderMessageProjection = orderCancellingEventKafkaProjection.getData();
 
         return CancelPaymentCommand.builder()
+                .paymentId(UUID.fromString(orderCancellingEventKafkaProjection.getMessageId()))
                 .orderId(UUID.fromString(orderMessageProjection.orderId()))
                 .customerId(UUID.fromString(orderMessageProjection.customerId()))
+                .sagaId(UUID.fromString(orderCancellingEventKafkaProjection.getSagaId()))
                 .price(orderMessageProjection.price())
                 .build();
     }

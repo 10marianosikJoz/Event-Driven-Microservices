@@ -42,64 +42,28 @@ CREATE TABLE warehouse.order_items
     CONSTRAINT products_pkey PRIMARY KEY (id)
 );
 
---DROP TABLE IF EXISTS warehouse.warehouse_products CASCADE;
---
---CREATE TABLE warehouse.warehouse_products
---(
---    id uuid NOT NULL,
---    warehouse_id uuid NOT NULL,
---    product_id uuid NOT NULL,
---    CONSTRAINT warehouse_products_pkey PRIMARY KEY (id)
---);
---
---ALTER TABLE warehouse.warehouse_products
---    ADD CONSTRAINT "FK_WAREHOUSE_ID" FOREIGN KEY (warehouse_id)
---    REFERENCES warehouse.warehouse (id) MATCH SIMPLE
---    ON UPDATE NO ACTION
---    ON DELETE RESTRICT
---    NOT VALID;
---
---ALTER TABLE warehouse.warehouse_products
---    ADD CONSTRAINT "FK_PRODUCT_ID" FOREIGN KEY (product_id)
---    REFERENCES warehouse.products (id) MATCH SIMPLE
---    ON UPDATE NO ACTION
---    ON DELETE RESTRICT
---    NOT VALID;
---
---DROP MATERIALIZED VIEW IF EXISTS warehouse.warehouse_order_materialized_view;
---
---CREATE MATERIALIZED VIEW warehouse.warehouse_order_materialized_view
---TABLESPACE pg_default
---AS
--- SELECT w.id AS warehouse_id,
---    w.name AS warehouse_name,
---    w.active AS warehouse_active,
---    p.id AS product_id,
---    p.name AS product_name,
---    p.price AS product_price,
---    p.available AS product_available
---   FROM warehouse.warehouse w,
---    warehouse.products p,
---    warehouse.warehouse_products wp
---  WHERE w.id = wp.warehouse_id AND p.id = wp.product_id
---WITH DATA;
---
---refresh materialized VIEW warehouse.warehouse_order_materialized_view;
---
---DROP function IF EXISTS warehouse.refresh_warehouse_order_materialized_view;
---
---CREATE OR replace function warehouse.refresh_warehouse_order_materialized_view()
---returns trigger
---AS '
---BEGIN
---    refresh materialized VIEW warehouse.warehouse_order_materialized_view;
---    return null;
---END;
---'  LANGUAGE plpgsql;
---
---DROP trigger IF EXISTS refresh_warehouse_order_materialized_view ON warehouse.warehouse_products;
---
---CREATE trigger refresh_warehouse_order_materialized_view
---after INSERT OR UPDATE OR DELETE OR truncate
---ON warehouse.warehouse_products FOR each statement
---EXECUTE PROCEDURE warehouse.refresh_warehouse_order_materialized_view();
+DROP TABLE IF EXISTS "warehouse".order_processed_outbox_entity CASCADE;
+
+CREATE TABLE "warehouse".order_processed_outbox_entity
+(
+    id uuid NOT NULL,
+    saga_id uuid NOT NULL,
+    created_at TIMESTAMP,
+    processed_at TIMESTAMP,
+    payload JSONB NOT NULL,
+    aggregate_id UUID NOT NULL,
+    payload_type VARCHAR(150),
+    message_type VARCHAR(150) NOT NULL,
+    outbox_status VARCHAR(30) NOT NULL,
+    order_approval_status order_approval_status NOT NULL,
+    version INTEGER NOT NULL,
+    CONSTRAINT order_processed_outbox_entity_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX "outbox_warehouse_order_approval_status"
+    ON "warehouse".order_processed_outbox_entity
+    (message_type, order_approval_status);
+
+CREATE UNIQUE index "outbox_warehouse_saga_id_order_approval_status"
+    on "warehouse".order_processed_outbox_entity
+        (message_type, saga_id, order_approval_status, outbox_status);

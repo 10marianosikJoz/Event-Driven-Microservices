@@ -1,7 +1,6 @@
 package com.product.ordering.domain;
 
 import com.product.ordering.domain.entity.OrderProcessed;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
 import com.product.ordering.domain.entity.Warehouse;
 import com.product.ordering.domain.event.OrderApprovedEvent;
 import com.product.ordering.domain.event.OrderApprovalEvent;
@@ -13,9 +12,7 @@ import java.time.Instant;
 public class WarehouseDomainService {
 
     public OrderApprovalEvent verifyOrder(Warehouse warehouse,
-                                          OrderProcessed orderProcessed,
-                                          DomainEventPublisher<OrderApprovedEvent> orderApprovedEventDomainEventPublisher,
-                                          DomainEventPublisher<OrderRejectedEvent> orderRejectedEventDomainEventPublisher) {
+                                          OrderProcessed orderProcessed) {
 
         try {
             orderProcessed.initialize();
@@ -25,15 +22,13 @@ public class WarehouseDomainService {
 
             return new OrderApprovedEvent(orderProcessed,
                                           warehouse.id(),
-                                          Instant.now(),
-                                          orderApprovedEventDomainEventPublisher);
+                                          Instant.now());
         } catch (WarehouseDomainException e) {
             orderProcessed.reject();
 
             return new OrderRejectedEvent(orderProcessed,
                                           warehouse.id(),
                                           Instant.now(),
-                                          orderRejectedEventDomainEventPublisher,
                                           e.getMessage());
         }
     }

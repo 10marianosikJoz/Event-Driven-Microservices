@@ -10,6 +10,7 @@ import java.util.List;
 public record PaymentStatusEvent(String id,
                                  Instant createdAt,
                                  String orderId,
+                                 String sagaId,
                                  String paymentId,
                                  String customerId,
                                  PaymentStatus paymentStatus,
@@ -25,6 +26,7 @@ public record PaymentStatusEvent(String id,
         private String id;
         private Instant createdAt;
         private String orderId;
+        private String sagaId;
         private String paymentId;
         private String customerId;
         private PaymentStatus paymentStatus;
@@ -45,6 +47,11 @@ public record PaymentStatusEvent(String id,
 
         public PaymentStatusEventBuilder orderId(String orderId) {
             this.orderId = orderId;
+            return this;
+        }
+
+        public PaymentStatusEventBuilder sagaId(String sagaId) {
+            this.sagaId = sagaId;
             return this;
         }
 
@@ -77,6 +84,7 @@ public record PaymentStatusEvent(String id,
             return new PaymentStatusEvent(id,
                                           createdAt,
                                           orderId,
+                                          sagaId,
                                           paymentId,
                                           customerId,
                                           paymentStatus,

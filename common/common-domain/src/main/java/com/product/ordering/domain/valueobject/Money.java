@@ -13,11 +13,11 @@ public record Money(BigDecimal amount) {
     }
 
     public boolean isGreaterThan(Money money) {
-        return this.amount != null && this.amount.compareTo(money.getAmount()) > 0;
+        return this.amount != null && this.amount.compareTo(money.amount()) > 0;
     }
 
     public Money add(Money money) {
-        return new Money(setScale(this.amount.add(money.getAmount())));
+        return new Money(setScale(this.amount.add(money.amount())));
     }
 
     public Money subtract(Money money) {

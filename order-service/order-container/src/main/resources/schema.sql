@@ -74,3 +74,25 @@ ALTER TABLE "order".delivery_address
     ON UPDATE NO ACTION
     ON DELETE CASCADE
     NOT VALID;
+
+DROP TABLE IF EXISTS "order".order_outbox_entity CASCADE;
+
+CREATE TABLE "order".order_outbox_entity
+(
+    id uuid NOT NULL,
+    saga_id uuid NOT NULL,
+    created_at TIMESTAMP,
+    processed_at TIMESTAMP,
+    payload JSONB NOT NULL,
+    aggregate_id UUID NOT NULL,
+    payload_type VARCHAR(250) NOT NULL,
+    message_type VARCHAR(250) NOT NULL,
+    outbox_status VARCHAR(30) NOT NULL,
+    saga_status VARCHAR(30) NOT NULL,
+    version INTEGER NOT NULL,
+    CONSTRAINT order_outbox_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX "outbox_order_saga_status"
+    ON "order".order_outbox_entity
+    (message_type, outbox_status, saga_status);

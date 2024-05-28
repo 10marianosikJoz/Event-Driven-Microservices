@@ -2,10 +2,12 @@ package com.product.ordering.adapters.kafka.listener;
 
 import com.product.ordering.application.saga.OrderPaymentSaga;
 import com.product.ordering.domain.event.PaymentStatusEvent;
+import com.product.ordering.domain.exception.OrderNotFoundException;
 import com.product.ordering.domain.valueobject.PaymentStatus;
 import com.product.ordering.system.kafka.model.event.PaymentStatusEventKafkaProjection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +29,15 @@ class PaymentStatusKafkaEventListenerHelper {
     }
 
     void handlePaymentStatusEventData(List<PaymentStatusEventKafkaProjection> messages) {
-        messages.forEach(this::determinePaymentStatus);
+        messages.forEach(it -> {
+            try {
+                determinePaymentStatus(it);
+            } catch (OptimisticLockingFailureException e) {
+                LOGGER.error("Optimistic locking exception PaymentStatusKafkaEventListenerHelper occurred. Order id: {}", it.getData().orderId());
+            } catch (OrderNotFoundException e) {
+                LOGGER.error("Order not found. Order id: {}", it.getData().orderId());
+            }
+        });
     }
 
     private void determinePaymentStatus(PaymentStatusEventKafkaProjection paymentStatusEventKafkaProjection) {

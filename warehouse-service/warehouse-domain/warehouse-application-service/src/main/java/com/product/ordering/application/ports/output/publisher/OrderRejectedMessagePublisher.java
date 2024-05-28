@@ -1,6 +1,10 @@
 package com.product.ordering.application.ports.output.publisher;
 
-import com.product.ordering.domain.event.OrderRejectedEvent;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
+import com.product.ordering.application.outbox.projection.OrderProcessedOutboxMessage;
 
-public interface OrderRejectedMessagePublisher extends DomainEventPublisher<OrderRejectedEvent> {}
+import java.util.function.Consumer;
+
+public interface OrderRejectedMessagePublisher {
+
+    void publish(OrderProcessedOutboxMessage orderOutboxMessage, Consumer<OrderProcessedOutboxMessage> outboxCallback);
+}

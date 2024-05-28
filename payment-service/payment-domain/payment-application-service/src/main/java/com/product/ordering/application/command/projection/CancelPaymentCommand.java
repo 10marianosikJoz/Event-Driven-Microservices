@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
-public record CancelPaymentCommand(UUID orderId,
+public record CancelPaymentCommand(UUID paymentId,
+                                   UUID orderId,
                                    UUID customerId,
+                                   UUID sagaId,
                                    BigDecimal price) {}

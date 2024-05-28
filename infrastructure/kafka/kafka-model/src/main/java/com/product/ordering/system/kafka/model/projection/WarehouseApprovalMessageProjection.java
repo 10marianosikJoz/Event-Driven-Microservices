@@ -8,5 +8,6 @@ import java.util.List;
 @Builder
 public record WarehouseApprovalMessageProjection(String warehouseId,
                                                  String orderId,
+                                                 String sagaId,
                                                  String orderApprovalStatus,
                                                  List<String> failureMessages) implements Serializable {}

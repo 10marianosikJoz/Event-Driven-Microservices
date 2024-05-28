@@ -10,13 +10,12 @@ public class WarehouseApplicationService implements WarehouseApprovalMessageList
 
     private final WarehouseApprovalHandler warehouseApprovalHandler;
 
-    WarehouseApplicationService(WarehouseApprovalHandler warehouseApprovalHandler) {
+    WarehouseApplicationService(final WarehouseApprovalHandler warehouseApprovalHandler) {
         this.warehouseApprovalHandler = warehouseApprovalHandler;
     }
 
     @Override
     public void verifyOrder(OrderPaidEvent orderPaidEvent) {
-        var orderApprovalEvent = warehouseApprovalHandler.verifyOrder(orderPaidEvent);
-        orderApprovalEvent.run();
+        warehouseApprovalHandler.verifyOrder(orderPaidEvent);
     }
 }

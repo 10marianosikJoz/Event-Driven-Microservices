@@ -7,11 +7,12 @@ import java.time.Instant;
 
 public class PaymentStatusEventKafkaProjection extends MessageKafkaProjection<PaymentMessageProjection> {
 
-    public PaymentStatusEventKafkaProjection(final PaymentMessageProjection paymentMessageProjection,
-                                             final String itemId,
-                                             final Instant createdAt) {
+    public PaymentStatusEventKafkaProjection(PaymentMessageProjection paymentMessageProjection,
+                                             String itemId,
+                                             Instant createdAt,
+                                             String sagaId) {
 
-        super(itemId, createdAt, paymentMessageProjection);
+        super(itemId, createdAt, paymentMessageProjection, sagaId);
     }
 
     public PaymentStatusEventKafkaProjection() {}

@@ -14,11 +14,13 @@ dependencies {
     implementation(project(':infrastructure:kafka:kafka-consumer'))
     implementation(project(':infrastructure:kafka:kafka-model'))
     implementation(project(':infrastructure:kafka:kafka-message'))
+    implementation(project(':infrastructure:outbox'))
     implementation(project(':common:common-domain'))
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.spring.kafka)
+    implementation(libs.postgresql)
 }
 
 test {

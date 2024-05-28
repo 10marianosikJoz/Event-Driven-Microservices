@@ -47,3 +47,29 @@ CREATE TABLE "payment".billfold_history
     transaction_type transaction_type NOT NULL,
     CONSTRAINT billfold_history_pkey PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS "payment".payment_outbox_entity CASCADE;
+
+CREATE TABLE "payment".payment_outbox_entity
+(
+    id uuid NOT NULL,
+    saga_id uuid NOT NULL,
+    created_at TIMESTAMP,
+    message_type VARCHAR(100) NOT NULL,
+    processed_at TIMESTAMP,
+    payload JSONB NOT NULL,
+    aggregate_id UUID NOT NULL,
+    payload_type VARCHAR(150),
+    outbox_status VARCHAR(30) NOT NULL,
+    payment_status VARCHAR(30) NOT NULL,
+    version INTEGER NOT NULL,
+    CONSTRAINT payment_outbox_entity_pkey PRIMARY KEY (id)
+);
+
+CREATE INDEX "outbox_payment_saga_type"
+    ON "payment".payment_outbox_entity
+    (message_type, outbox_status, payment_status);
+
+CREATE UNIQUE index "outbox_payment_saga_id"
+    on "payment".payment_outbox_entity
+        (message_type, saga_id, payment_status, outbox_status);

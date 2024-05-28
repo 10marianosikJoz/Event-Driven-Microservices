@@ -1,20 +1,18 @@
 package com.product.ordering.system;
 
 import com.product.ordering.application.mapper.PaymentMessageMapper;
+import com.product.ordering.application.outbox.projection.PaymentStatusEventPayload;
+import com.product.ordering.application.outbox.projection.mapper.PaymentOutboxMapper;
 import com.product.ordering.application.ports.input.listener.PaymentRequestMessageListener;
-import com.product.ordering.application.ports.input.publisher.PaymentStatusMessagePublisher;
 import com.product.ordering.domain.PaymentDomainService;
-import com.product.ordering.domain.valueobject.CustomerId;
-import com.product.ordering.domain.valueobject.Money;
-import com.product.ordering.domain.valueobject.OrderId;
-import com.product.ordering.domain.valueobject.PaymentStatus;
+import com.product.ordering.domain.valueobject.*;
 import com.product.ordering.application.command.CommonCommandHandler;
 import com.product.ordering.application.command.CancelPaymentCommandHandler;
 import com.product.ordering.application.command.CompletePaymentCommandHandler;
 import com.product.ordering.application.exception.BillfoldNotFoundException;
 import com.product.ordering.domain.entity.Billfold;
 import com.product.ordering.domain.entity.BillfoldHistory;
-import com.product.ordering.domain.valueobject.TransactionType;
+import com.product.ordering.system.outbox.model.OutboxStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,22 +29,24 @@ class PaymentRequestMessageListenerTest {
     private final CommonCommandHandler commonCommandHandler = new CommonCommandHandler(inMemoryPaymentRepository,
                                                                                        inMemoryBillfoldRepository,
                                                                                        inMemoryBillfoldHistoryRepository);
-
-    private final PaymentStatusMessagePublisher paymentApprovalEventMessagePublisher = new PaymentApprovalEventMessagePublisherMock();
+    private final PaymentOutboxMapper paymentOutboxMapper = new PaymentOutboxMapper();
+    private final InMemoryPaymentOutboxRepository inMemoryPaymentOutboxRepository = new InMemoryPaymentOutboxRepository();
 
     private final CompletePaymentCommandHandler completePaymentCommandHandler = new CompletePaymentCommandHandler(paymentDomainService,
                                                                                                                   paymentMessageMapper,
                                                                                                                   inMemoryBillfoldRepository,
                                                                                                                   inMemoryBillfoldHistoryRepository,
                                                                                                                   commonCommandHandler,
-                                                                                                                  paymentApprovalEventMessagePublisher);
+                                                                                                                  inMemoryPaymentOutboxRepository,
+                                                                                                                  paymentOutboxMapper);
 
     private final CancelPaymentCommandHandler cancelPaymentCommandHandler = new CancelPaymentCommandHandler(paymentDomainService,
                                                                                                             inMemoryPaymentRepository,
                                                                                                             inMemoryBillfoldRepository,
                                                                                                             inMemoryBillfoldHistoryRepository,
                                                                                                             commonCommandHandler,
-                                                                                                            paymentApprovalEventMessagePublisher);
+                                                                                                            inMemoryPaymentOutboxRepository,
+                                                                                                            paymentOutboxMapper);
 
     private final PaymentRequestMessageListener paymentRequestMessageListener = new PaymentRequestMessageListener(completePaymentCommandHandler, cancelPaymentCommandHandler);
 
@@ -55,6 +55,7 @@ class PaymentRequestMessageListenerTest {
         inMemoryPaymentRepository.truncate();
         inMemoryBillfoldRepository.truncate();
         inMemoryBillfoldHistoryRepository.truncate();
+        inMemoryPaymentOutboxRepository.truncate();
     }
 
     @Test
@@ -95,6 +96,24 @@ class PaymentRequestMessageListenerTest {
                 .hasFieldOrProperty("customerId")
                 .hasFieldOrPropertyWithValue("transactionType", TransactionType.VIRTUAL_BILLFOLD)
                 .extracting(BillfoldHistory::amount).isEqualTo(new Money(PaymentConstantDataProvider.PAYMENT_PRICE));
+
+        var outboxMessage = inMemoryPaymentOutboxRepository.findLastByPaymentId(new PaymentId(paymentFromDatabase.id().value())).get();
+
+        assertThat(outboxMessage)
+                .hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.COMPLETED)
+                .hasFieldOrProperty("id")
+                .hasFieldOrProperty("sagaId")
+                .hasFieldOrProperty("createdAt")
+                .hasFieldOrProperty("processedAt")
+                .hasFieldOrPropertyWithValue("aggregateId", paymentFromDatabase.id().value())
+                .hasFieldOrPropertyWithValue("outboxStatus", OutboxStatus.STARTED)
+                .extracting(it -> (PaymentStatusEventPayload) it.getPayload())
+                .hasFieldOrPropertyWithValue("paymentId", paymentFromDatabase.id().value().toString())
+                .hasFieldOrPropertyWithValue("createdAt", paymentFromDatabase.createdAt())
+                .hasFieldOrPropertyWithValue("orderId", paymentFromDatabase.orderId().value().toString())
+                .hasFieldOrPropertyWithValue("customerId", paymentFromDatabase.customerId().value().toString())
+                .hasFieldOrPropertyWithValue("paymentStatus", paymentFromDatabase.paymentStatus().toString())
+                .hasFieldOrPropertyWithValue("price", paymentFromDatabase.price().amount());
     }
 
     @Test
@@ -152,6 +171,24 @@ class PaymentRequestMessageListenerTest {
                 .hasFieldOrPropertyWithValue("transactionType", TransactionType.VIRTUAL_BILLFOLD)
                 .extracting(BillfoldHistory::amount).isEqualTo(new Money(PaymentConstantDataProvider.PAYMENT_PRICE));
 
+        var outboxMessage = inMemoryPaymentOutboxRepository.findLastByPaymentId(new PaymentId(paymentFromDatabase.id().value())).get();
+
+        assertThat(outboxMessage)
+                .hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.REJECTED)
+                .hasFieldOrProperty("id")
+                .hasFieldOrProperty("sagaId")
+                .hasFieldOrProperty("createdAt")
+                .hasFieldOrProperty("processedAt")
+                .hasFieldOrPropertyWithValue("aggregateId", paymentFromDatabase.id().value())
+                .hasFieldOrPropertyWithValue("outboxStatus", OutboxStatus.STARTED)
+                .extracting(it -> (PaymentStatusEventPayload) it.getPayload())
+                .hasFieldOrPropertyWithValue("paymentId", paymentFromDatabase.id().value().toString())
+                .hasFieldOrPropertyWithValue("createdAt", paymentFromDatabase.createdAt())
+                .hasFieldOrPropertyWithValue("orderId", paymentFromDatabase.orderId().value().toString())
+                .hasFieldOrPropertyWithValue("customerId", paymentFromDatabase.customerId().value().toString())
+                .hasFieldOrPropertyWithValue("paymentStatus", paymentFromDatabase.paymentStatus().toString())
+                .hasFieldOrPropertyWithValue("price", paymentFromDatabase.price().amount());
+
     }
 
     @Test
@@ -192,6 +229,24 @@ class PaymentRequestMessageListenerTest {
                 .hasFieldOrProperty("customerId")
                 .hasFieldOrPropertyWithValue("transactionType", TransactionType.VIRTUAL_BILLFOLD)
                 .extracting(BillfoldHistory::amount).isEqualTo(new Money(PaymentConstantDataProvider.PAYMENT_PRICE));
+
+        var outboxMessage = inMemoryPaymentOutboxRepository.findLastByPaymentId(new PaymentId(paymentFromDatabase.id().value())).get();
+
+        assertThat(outboxMessage)
+                .hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.REJECTED)
+                .hasFieldOrProperty("id")
+                .hasFieldOrProperty("sagaId")
+                .hasFieldOrProperty("createdAt")
+                .hasFieldOrProperty("processedAt")
+                .hasFieldOrPropertyWithValue("aggregateId", paymentFromDatabase.id().value())
+                .hasFieldOrPropertyWithValue("outboxStatus", OutboxStatus.STARTED)
+                .extracting(it -> (PaymentStatusEventPayload) it.getPayload())
+                .hasFieldOrPropertyWithValue("paymentId", paymentFromDatabase.id().value().toString())
+                .hasFieldOrPropertyWithValue("createdAt", paymentFromDatabase.createdAt())
+                .hasFieldOrPropertyWithValue("orderId", paymentFromDatabase.orderId().value().toString())
+                .hasFieldOrPropertyWithValue("customerId", paymentFromDatabase.customerId().value().toString())
+                .hasFieldOrPropertyWithValue("paymentStatus", paymentFromDatabase.paymentStatus().toString())
+                .hasFieldOrPropertyWithValue("price", paymentFromDatabase.price().amount());
 
     }
 
@@ -235,5 +290,23 @@ class PaymentRequestMessageListenerTest {
                 .hasFieldOrProperty("customerId")
                 .hasFieldOrPropertyWithValue("transactionType", TransactionType.VIRTUAL_BILLFOLD)
                 .extracting(BillfoldHistory::amount).isEqualTo(new Money(PaymentConstantDataProvider.BILLFOLD_HISTORY_ENTRY_AMOUNT));
+
+        var outboxMessage = inMemoryPaymentOutboxRepository.findLastByPaymentId(new PaymentId(paymentFromDatabase.id().value())).get();
+
+        assertThat(outboxMessage)
+                .hasFieldOrPropertyWithValue("paymentStatus", PaymentStatus.CANCELLED)
+                .hasFieldOrProperty("id")
+                .hasFieldOrProperty("sagaId")
+                .hasFieldOrProperty("createdAt")
+                .hasFieldOrProperty("processedAt")
+                .hasFieldOrPropertyWithValue("aggregateId", paymentFromDatabase.id().value())
+                .hasFieldOrPropertyWithValue("outboxStatus", OutboxStatus.STARTED)
+                .extracting(it -> (PaymentStatusEventPayload) it.getPayload())
+                .hasFieldOrPropertyWithValue("paymentId", paymentFromDatabase.id().value().toString())
+                .hasFieldOrPropertyWithValue("createdAt", paymentFromDatabase.createdAt())
+                .hasFieldOrPropertyWithValue("orderId", paymentFromDatabase.orderId().value().toString())
+                .hasFieldOrPropertyWithValue("customerId", paymentFromDatabase.customerId().value().toString())
+                .hasFieldOrPropertyWithValue("paymentStatus", paymentFromDatabase.paymentStatus().toString())
+                .hasFieldOrPropertyWithValue("price", paymentFromDatabase.price().amount());
     }
 }

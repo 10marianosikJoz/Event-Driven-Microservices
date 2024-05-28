@@ -437,37 +437,6 @@ public class OrderDomainDataProvider {
                 .build();
     }
 
-    public static Order orderWithPendingState() {
-        return Order.builder()
-                .customerId(new CustomerId(OrderConstantDataProvider.CUSTOMER_ID))
-                .warehouseId(new WarehouseId(OrderConstantDataProvider.WAREHOUSE_ID))
-                .deliveryAddress(DeliveryAddress.builder()
-                        .street(OrderConstantDataProvider.STREET)
-                        .postalCode(OrderConstantDataProvider.POSTAL_CODE)
-                        .city(OrderConstantDataProvider.CITY)
-                        .build())
-                .price(new Money(OrderConstantDataProvider.ORDER_PRICE))
-                .currency(OrderConstantDataProvider.CURRENCY)
-                .orderItems(Set.of(OrderItem.builder()
-                                .orderItemId(new OrderItemId(OrderConstantDataProvider.ORDER_ID.getLeastSignificantBits()))
-                                .product(new Product(new ProductId(OrderConstantDataProvider.PRODUCT_ID)))
-                                .quantity(new Quantity(1))
-                                .price(new Money(OrderConstantDataProvider.PRODUCT_PRICE))
-                                .subTotal(new Money(OrderConstantDataProvider.PRODUCT_SUBTOTAL))
-                                .build(),
-                        OrderItem.builder()
-                                .product(new Product(new ProductId(OrderConstantDataProvider.PRODUCT_ID)))
-                                .quantity(new Quantity(3))
-                                .price(new Money(OrderConstantDataProvider.PRODUCT_PRICE))
-                                .subTotal(new Money(OrderConstantDataProvider.PRODUCTS_SUBTOTAL))
-                                .build()))
-                .paymentMethod(OrderConstantDataProvider.PAYMENT_METHOD)
-                .deliveryMethod(OrderConstantDataProvider.PACKAGE_BOX_DELIVERY_METHOD)
-                .coupon(OrderConstantDataProvider.VALID_COUPON)
-                .orderStatus(OrderStatus.PENDING)
-                .build();
-    }
-
     public static Order orderToInitialize() {
         return Order.builder()
                 .customerId(new CustomerId(OrderConstantDataProvider.CUSTOMER_ID))

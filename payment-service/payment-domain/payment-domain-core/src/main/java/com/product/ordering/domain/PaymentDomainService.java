@@ -23,8 +23,7 @@ public class PaymentDomainService {
     public PaymentEvent completePayment(Payment payment,
                                         Billfold billfold,
                                         List<String> failureMessages,
-                                        List<BillfoldHistory> virtualBillfoldHistories,
-                                        DomainEventPublisher<PaymentEvent> paymentApprovalEventDomainEventPublisher) {
+                                        List<BillfoldHistory> virtualBillfoldHistories) {
         try {
             payment.validatePayment(failureMessages);
             payment.initializePayment();
@@ -34,16 +33,14 @@ public class PaymentDomainService {
             payment.completePayment();
 
             return new PaymentCompletedEvent(payment,
-                                             Instant.now(),
-                                             paymentApprovalEventDomainEventPublisher);
+                                             Instant.now());
 
         } catch (PaymentDomainException e) {
             payment.rejectPayment();
 
             return new PaymentRejectedEvent(payment,
                                             Instant.now(),
-                                            failureMessages,
-                                            paymentApprovalEventDomainEventPublisher);
+                                            failureMessages);
         }
     }
 
@@ -60,8 +57,7 @@ public class PaymentDomainService {
     public PaymentEvent cancelPayment(Payment payment,
                                       Billfold billfold,
                                       List<String> failureMessages,
-                                      List<BillfoldHistory> virtualBillfoldHistories,
-                                      DomainEventPublisher<PaymentEvent> paymentApprovalEventDomainEventPublisher) {
+                                      List<BillfoldHistory> virtualBillfoldHistories) {
 
         try {
             payment.validatePayment(failureMessages);
@@ -70,16 +66,14 @@ public class PaymentDomainService {
             updateVirtualWalletHistory(payment, virtualBillfoldHistories, TransactionType.VIRTUAL_BILLFOLD);
 
             return new PaymentCancelledEvent(payment,
-                                             Instant.now(),
-                                             paymentApprovalEventDomainEventPublisher);
+                                             Instant.now());
 
         } catch (PaymentDomainException e) {
             payment.rejectPayment();
 
             return new PaymentRejectedEvent(payment,
                                             Instant.now(),
-                                            failureMessages,
-                                            paymentApprovalEventDomainEventPublisher);
+                                            failureMessages);
         }
     }
 

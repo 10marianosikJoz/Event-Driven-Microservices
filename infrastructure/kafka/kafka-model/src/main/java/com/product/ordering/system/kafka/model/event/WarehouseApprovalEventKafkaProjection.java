@@ -7,11 +7,12 @@ import java.time.Instant;
 
 public class WarehouseApprovalEventKafkaProjection extends MessageKafkaProjection<WarehouseApprovalMessageProjection> {
 
-    public WarehouseApprovalEventKafkaProjection(final WarehouseApprovalMessageProjection warehouseApprovalMessageProjection,
-                                                 final String itemId,
-                                                 final Instant createdAt) {
+    public WarehouseApprovalEventKafkaProjection(WarehouseApprovalMessageProjection warehouseApprovalMessageProjection,
+                                                 String itemId,
+                                                 Instant createdAt,
+                                                 String sagaId) {
 
-        super(itemId, createdAt, warehouseApprovalMessageProjection);
+        super(itemId, createdAt, warehouseApprovalMessageProjection, sagaId);
     }
 
     public WarehouseApprovalEventKafkaProjection() {}

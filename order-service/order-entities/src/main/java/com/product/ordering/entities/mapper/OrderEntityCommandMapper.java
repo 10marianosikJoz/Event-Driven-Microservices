@@ -9,6 +9,8 @@ import com.product.ordering.entities.entity.OrderEntity;
 import com.product.ordering.entities.entity.OrderItemEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
@@ -69,7 +71,7 @@ public class OrderEntityCommandMapper {
                 .deliveryMethod(order.getDeliveryMethod())
                 .coupon(order.getCoupon())
                 .orderStatus(order.getOrderStatus())
-                .failureMessages(Collections.singletonList(order.getFailureMessages()))
+                .failureMessages(new ArrayList<>(Arrays.asList(order.getFailureMessages())))
                 .build();
     }
 

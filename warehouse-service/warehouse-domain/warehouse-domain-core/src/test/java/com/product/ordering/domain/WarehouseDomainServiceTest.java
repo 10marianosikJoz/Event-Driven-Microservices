@@ -1,8 +1,5 @@
 package com.product.ordering.domain;
 
-import com.product.ordering.domain.event.OrderApprovedEvent;
-import com.product.ordering.domain.event.OrderRejectedEvent;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
 import com.product.ordering.domain.valueobject.OrderApprovalStatus;
 import org.junit.jupiter.api.Test;
 
@@ -11,8 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WarehouseDomainServiceTest {
 
     private final WarehouseDomainService warehouseDomainService = new WarehouseDomainService();
-    private final DomainEventPublisher<OrderApprovedEvent> orderApprovedEventDomainEventPublisher = new OrderApprovedEventMessagePublisherMock();
-    private final DomainEventPublisher<OrderRejectedEvent> orderRejectedEventDomainEventPublisher = new OrderRejectedEventMessagePublisherMock();
 
     @Test
     void shouldAcceptOrder() {
@@ -23,9 +18,7 @@ class WarehouseDomainServiceTest {
 
         //when
         var orderApprovalEvent = warehouseDomainService.verifyOrder(warehouse,
-                                                                    orderProcessed,
-                                                                    orderApprovedEventDomainEventPublisher,
-                                                                    orderRejectedEventDomainEventPublisher);
+                                                                    orderProcessed);
 
         //then
         assertThat(orderApprovalEvent.orderProcessed().orderApprovalStatus()).isEqualTo(OrderApprovalStatus.APPROVED);
@@ -40,9 +33,7 @@ class WarehouseDomainServiceTest {
 
         //when
         var orderApprovalEvent = warehouseDomainService.verifyOrder(warehouse,
-                                                                    orderProcessed,
-                                                                    orderApprovedEventDomainEventPublisher,
-                                                                    orderRejectedEventDomainEventPublisher);
+                                                                    orderProcessed);
 
         //then
         assertThat(orderApprovalEvent.orderProcessed().orderApprovalStatus()).isEqualTo(OrderApprovalStatus.REJECTED);
@@ -58,9 +49,7 @@ class WarehouseDomainServiceTest {
 
         //when
         var orderApprovalEvent = warehouseDomainService.verifyOrder(warehouse,
-                                                                    orderProcessed,
-                                                                    orderApprovedEventDomainEventPublisher,
-                                                                    orderRejectedEventDomainEventPublisher);
+                                                                    orderProcessed);
 
         //then
         assertThat(orderApprovalEvent.orderProcessed().orderApprovalStatus()).isEqualTo(OrderApprovalStatus.REJECTED);

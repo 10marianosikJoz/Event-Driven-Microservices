@@ -29,23 +29,20 @@ class WarehouseApprovalKafkaEventListenerHelper {
 
     void handleWarehouseApprovalEventData(List<WarehouseApprovalEventKafkaProjection> messages) {
         messages.forEach(it -> {
-            var orderId = it.getData().orderId();
-            determineOrderApprovalStatus(orderId, it);
+            try {
+                determineOrderApprovalStatus(it);
+            } catch (OptimisticLockingFailureException e) {
+                LOGGER.error("Optimistic locking exception in WarehouseApprovalKafkaEventListenerHelper occurred. Order id: {}.", it.getData().orderId());
+            } catch (OrderNotFoundException e) {
+                LOGGER.error("Order not found. Order id: {}.", it.getData().orderId());
+            }
         });
     }
 
-    private void determineOrderApprovalStatus(String orderId,
-                                              WarehouseApprovalEventKafkaProjection warehouseApprovalEventKafkaProjection) {
-        try {
+    private void determineOrderApprovalStatus(WarehouseApprovalEventKafkaProjection warehouseApprovalEventKafkaProjection) {
             var warehouseApprovalEvent = mapWarehouseApprovalEventKafkaProjectionToWarehouseApprovalEvent(warehouseApprovalEventKafkaProjection);
 
             verifyOrderApprovalStatus(warehouseApprovalEvent);
-
-        } catch (OptimisticLockingFailureException e) {
-            LOGGER.error("Optimistic locking exception in WarehouseApprovalKafkaEventListener for order id: {}.", orderId);
-        } catch (OrderNotFoundException e) {
-            LOGGER.error("Order not found, order id: {}.", orderId);
-        }
     }
 
     private WarehouseApprovalEvent mapWarehouseApprovalEventKafkaProjectionToWarehouseApprovalEvent(WarehouseApprovalEventKafkaProjection warehouseApprovalEventKafkaProjection) {

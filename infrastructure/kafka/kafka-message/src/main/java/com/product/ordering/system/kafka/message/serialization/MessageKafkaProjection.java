@@ -20,15 +20,18 @@ public class MessageKafkaProjection<T extends Serializable> implements TypeProje
     private Instant createdAt;
     private T data;
     private String type;
+    private String sagaId;
 
-    protected MessageKafkaProjection(final String dataId,
-                                     final Instant createdAt,
-                                     final T data) {
+    protected MessageKafkaProjection(String dataId,
+                                     Instant createdAt,
+                                     T data,
+                                     String sagaId) {
 
         this.dataId = dataId;
         adjustCreatedAt(createdAt);
         this.data = data;
         this.type = this.getClass().getName();
+        this.sagaId = sagaId;
     }
 
     public Instant createdAt() {

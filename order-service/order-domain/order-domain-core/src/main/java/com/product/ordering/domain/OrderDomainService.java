@@ -4,31 +4,26 @@ import com.product.ordering.domain.entity.Order;
 import com.product.ordering.domain.event.OrderCancellingEvent;
 import com.product.ordering.domain.event.OrderCreatedEvent;
 import com.product.ordering.domain.event.OrderPaidEvent;
-import com.product.ordering.domain.event.publisher.DomainEventPublisher;
 
 import java.time.Instant;
 import java.util.List;
 
 public class OrderDomainService {
 
-    public OrderCreatedEvent createOrder(Order order,
-                                         DomainEventPublisher<OrderCreatedEvent> orderCreatedEventDomainPublisher) {
+    public OrderCreatedEvent createOrder(Order order) {
 
         order.validateOrders();
         order.initializeOrder();
 
         return new OrderCreatedEvent(order,
-                                     Instant.now(),
-                                     orderCreatedEventDomainPublisher);
+                                     Instant.now());
     }
 
-    public OrderPaidEvent payOrder(Order order,
-                                   DomainEventPublisher<OrderPaidEvent> orderCompletedEventDomainPublisher) {
+    public OrderPaidEvent payOrder(Order order) {
         order.pay();
 
         return new OrderPaidEvent(order,
-                                  Instant.now(),
-                                  orderCompletedEventDomainPublisher);
+                                  Instant.now());
     }
 
     public void approveOrder(Order order) {
@@ -36,13 +31,12 @@ public class OrderDomainService {
     }
 
     public OrderCancellingEvent initializeCancelling(Order order,
-                                                     List<String> failureMessages,
-                                                     DomainEventPublisher<OrderCancellingEvent> orderCancelledEventDomainPublisher) {
+                                                     List<String> failureMessages) {
+
         order.initCancel(failureMessages);
 
         return new OrderCancellingEvent(order,
-                                       Instant.now(),
-                                       orderCancelledEventDomainPublisher);
+                                       Instant.now());
     }
 
     public void cancelOrder(Order order, List<String> failureMessages) {
