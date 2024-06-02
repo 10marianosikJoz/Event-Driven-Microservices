@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -45,7 +44,7 @@ public class OrderProcessedOutboxMapper {
         } else if (orderApprovalEvent instanceof OrderProcessedEvent){
             orderProcessedOutboxMessage.setPayload(mapOrderProcessedEventToOrderProcessedEventPayload(orderProcessed));
         } else {
-            orderProcessedOutboxMessage.setPayload(mapOrderApprvoedEventToOrderProcessedEventPayload(orderProcessed));
+            orderProcessedOutboxMessage.setPayload(mapOrderApprovedEventToOrderProcessedEventPayload(orderProcessed));
         }
     }
 
@@ -66,7 +65,7 @@ public class OrderProcessedOutboxMapper {
                 .build();
     }
 
-    private OrderProcessedEventPayload mapOrderApprvoedEventToOrderProcessedEventPayload(OrderProcessed orderProcessed) {
+    private OrderProcessedEventPayload mapOrderApprovedEventToOrderProcessedEventPayload(OrderProcessed orderProcessed) {
         return OrderProcessedEventPayload.builder()
                 .orderId(orderProcessed.id().value().toString())
                 .warehouseId(orderProcessed.warehouseId().value().toString())

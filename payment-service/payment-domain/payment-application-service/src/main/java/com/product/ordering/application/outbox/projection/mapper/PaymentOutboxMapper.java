@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -24,7 +23,7 @@ public class PaymentOutboxMapper {
         paymentCancelledOutboxMessage.setSagaId(sagaId);
         paymentCancelledOutboxMessage.setCreatedAt(payment.createdAt());
         paymentCancelledOutboxMessage.setProcessedAt(payment.createdAt());
-        paymentCancelledOutboxMessage.setPayload(preparePaymentStatusEventPayload(payment));
+        paymentCancelledOutboxMessage.setPayload(preparePaymentStatusEventPayload(payment, paymentEvent));
         paymentCancelledOutboxMessage.setAggregateId(payment.id().value());
         paymentCancelledOutboxMessage.setPaymentStatus(payment.paymentStatus());
         paymentCancelledOutboxMessage.setOutboxStatus(OutboxStatus.STARTED);
@@ -40,7 +39,7 @@ public class PaymentOutboxMapper {
         paymentCompletedOutboxMessage.setSagaId(sagaId);
         paymentCompletedOutboxMessage.setCreatedAt(payment.createdAt());
         paymentCompletedOutboxMessage.setProcessedAt(payment.createdAt());
-        paymentCompletedOutboxMessage.setPayload(preparePaymentStatusEventPayload(payment));
+        paymentCompletedOutboxMessage.setPayload(preparePaymentStatusEventPayload(payment, paymentEvent));
         paymentCompletedOutboxMessage.setAggregateId(payment.id().value());
         paymentCompletedOutboxMessage.setPaymentStatus(payment.paymentStatus());
         paymentCompletedOutboxMessage.setOutboxStatus(OutboxStatus.STARTED);
@@ -56,7 +55,7 @@ public class PaymentOutboxMapper {
         paymentRejectedOutboxMessage.setSagaId(sagaId);
         paymentRejectedOutboxMessage.setCreatedAt(payment.createdAt());
         paymentRejectedOutboxMessage.setProcessedAt(payment.createdAt());
-        paymentRejectedOutboxMessage.setPayload(preparePaymentStatusEventPayload(payment));
+        paymentRejectedOutboxMessage.setPayload(preparePaymentStatusEventPayload(payment, paymentEvent));
         paymentRejectedOutboxMessage.setAggregateId(payment.id().value());
         paymentRejectedOutboxMessage.setPaymentStatus(payment.paymentStatus());
         paymentRejectedOutboxMessage.setOutboxStatus(OutboxStatus.STARTED);
@@ -64,7 +63,7 @@ public class PaymentOutboxMapper {
         return paymentRejectedOutboxMessage;
     }
 
-    private PaymentStatusEventPayload preparePaymentStatusEventPayload(Payment payment) {
+    private PaymentStatusEventPayload preparePaymentStatusEventPayload(Payment payment, PaymentEvent paymentEvent) {
         return PaymentStatusEventPayload.builder()
                 .paymentId(payment.id().value().toString())
                 .createdAt(payment.createdAt())
@@ -72,6 +71,7 @@ public class PaymentOutboxMapper {
                 .customerId(payment.customerId().value().toString())
                 .paymentStatus(payment.paymentStatus().name())
                 .price(payment.price().amount())
+                .failureMessages(String.join("", paymentEvent.failureMessages()))
                 .build();
     }
 
