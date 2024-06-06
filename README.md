@@ -189,7 +189,7 @@ Order service in which order status is changed to PAID. This event is also read 
 Both approaches were used in the application. The Order service plays the role of orchestrator. In this approach only events
 are used. Thanks to this adding new microservices will not require code modification.
 
-![](documentation/product_ordering_system_saga.PNG)
+![](documentation/Product_ordering_system_saga.PNG)
 1. The Order service receives a request to create an order.
 2. The Order service creates an order and publishes an event named orderCreated. Order status has PENDING state. This event is read by the Payment service.
 3. The Payment service conducts payment process and publishes an event named paymentCompleted. This event is read by the Order service.
