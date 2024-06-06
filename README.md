@@ -61,8 +61,6 @@ The above diagram can be overwhelming due to the complexity. For the sake of sim
 
 Each microservice has arranged structure of modules:
 
-![](documentation/Hexagonal_module structure.PNG)
-
 * ### Domain
 The module contains two submodules:
 * ##### Domain-core
