@@ -33,7 +33,7 @@ I am passionate about microservice architecture and I want to expand my knowledg
 ## Architecture overview
 The application consists of 3 separate microservices. Each of them communicates asynchronously using *Kafka*.
 
-![](documentation/Application architecture.PNG)
+![](documentation/Application_architecture.PNG)
 
 The application is divided into several modules:
 * common - the microservice shared by other microservices,
@@ -61,6 +61,7 @@ The above diagram can be overwhelming due to the complexity. For the sake of sim
 
 Each microservice has arranged structure of modules:
 
+![](documentation/Hexagonal_module_structure.PNG)
 * ### Domain
 The module contains two submodules:
 * ##### Domain-core
